@@ -4,13 +4,27 @@
 #include "i_to_str.hpp"
 #include "str_to_i.hpp"
 
-static constexpr uint64_t total_iterations{ 50 };
-static constexpr uint64_t measured_iterations{ 10 };
-
-using namespace vn;
+#if defined(NDEBUG)
+static constexpr uint64_t total_iterations{ 20 };
+static constexpr uint64_t measured_iterations{ 5 };
+#else
+static constexpr uint64_t total_iterations{ 2 };
+static constexpr uint64_t measured_iterations{ 1 };
+#endif
 
 int main() {
-	str_to_i_tests::from_chars_tests<conversion_classes::str_to_i, total_iterations, measured_iterations>::impl();
-	i_to_str_tests::to_chars_tests<conversion_classes::i_to_str, total_iterations, measured_iterations>::impl();
+	benchmarks::tests<"int-to-str", vn::detail::conversion_classes::i_to_str, total_iterations, measured_iterations, i_to_str_tests::verify_correctness,
+		i_to_str_tests::digit_generator, benchmarks::test_holder<"std::to_chars", i_to_str_tests::conversion_benchmark<i_to_str_tests::std_op>>,
+		benchmarks::test_holder<"jeaiii::to_text", i_to_str_tests::conversion_benchmark<i_to_str_tests::jeaiii_op>>,
+		benchmarks::test_holder<"fmt::format_to", i_to_str_tests::conversion_benchmark<i_to_str_tests::fmt_format_to_op>>,
+		benchmarks::test_holder<"vn::to_chars", i_to_str_tests::conversion_benchmark<i_to_str_tests::vn_op>>>::impl();
+	benchmarks::tests<"str-to-int-leading-zeros", vn::detail::conversion_classes::str_to_i, total_iterations, measured_iterations, str_to_i_tests::verify_correctness_leading_zeros,
+		str_to_i_tests::leading_zero_string_generator, benchmarks::test_holder<"std::from_chars", str_to_i_tests::from_chars_benchmark<str_to_i_tests::std_from_op>>,
+		benchmarks::test_holder<"strtoll/strtoull", str_to_i_tests::from_chars_benchmark<str_to_i_tests::strto_op>>,
+		benchmarks::test_holder<"vn::from_chars", str_to_i_tests::from_chars_benchmark<str_to_i_tests::vn_from_op>>>::impl();
+	benchmarks::tests<"str-to-int", vn::detail::conversion_classes::str_to_i, total_iterations, measured_iterations, str_to_i_tests::verify_correctness,
+		str_to_i_tests::string_generator, benchmarks::test_holder<"std::from_chars", str_to_i_tests::from_chars_benchmark<str_to_i_tests::std_from_op>>,
+		benchmarks::test_holder<"strtoll/strtoull", str_to_i_tests::from_chars_benchmark<str_to_i_tests::strto_op>>,
+		benchmarks::test_holder<"vn::from_chars", str_to_i_tests::from_chars_benchmark<str_to_i_tests::vn_from_op>>>::impl();
 	return 0;
 }

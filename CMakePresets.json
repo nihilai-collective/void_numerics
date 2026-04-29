@@ -15,14 +15,14 @@
       }
     },
     {
-      "name": "windows-unit-test-release",
-      "inherits": "windows-unit-test",
-      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
-    },
-    {
       "name": "windows-unit-test-debug",
       "inherits": "windows-unit-test",
       "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "windows-unit-test-release",
+      "inherits": "windows-unit-test",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
     },
     {
       "name": "windows-benchmark",
