@@ -278,6 +278,28 @@ namespace vn {
 				return 6ULL;
 			} else if constexpr (divisor == 100000000ULL) {
 				return 7ULL;
+			} else if constexpr (divisor == 1000000000ULL) {
+				return 8ULL;
+			} else if constexpr (divisor == 10000000000ULL) {
+				return 9ULL;
+			} else if constexpr (divisor == 100000000000ULL) {
+				return 10ULL;
+			} else if constexpr (divisor == 1000000000000ULL) {
+				return 11ULL;
+			} else if constexpr (divisor == 10000000000000ULL) {
+				return 12ULL;
+			} else if constexpr (divisor == 100000000000000ULL) {
+				return 13ULL;
+			} else if constexpr (divisor == 1000000000000000ULL) {
+				return 14ULL;
+			} else if constexpr (divisor == 10000000000000000ULL) {
+				return 15ULL;
+			} else if constexpr (divisor == 100000000000000000ULL) {
+				return 16ULL;
+			} else if constexpr (divisor == 1000000000000000000ULL) {
+				return 17ULL;
+			} else if constexpr (divisor == 10000000000000000000ULL) {
+				return 18ULL;
 			} else {
 				static_assert(false_type::value, "Sorry, but that divisor is not within this table!");
 			}
@@ -334,22 +356,199 @@ namespace vn {
 			static constexpr const mul_shift_entry<v_type>* __restrict values{ [] {
 				VN_ALIGN(64)
 				constexpr auto table{ [] {
-					std::array<mul_shift_entry<v_type>, 8> t{ {
-						{ 0xcccccccccccccccdULL, 67 },
-						{ 0xa3d70a3d70a3d70bULL, 70 },
-						{ 0x83126e978d4fdf3cULL, 73 },
-						{ 0xd1b71758e219652cULL, 77 },
-						{ 0xa7c5ac471b478424ULL, 80 },
-						{ 0x8637bd05af6c69b6ULL, 83 },
-						{ 0xd6bf94d5e57a42bdULL, 87 },
-						{ 0xabcc77118461cefdULL, 90 },
-					} };
+					std::array<mul_shift_entry<v_type>, 18> t{
+						mul_shift_entry<v_type>{ 0xcccccccccccccccd, 67 },
+						{ 0xa3d70a3d70a3d70b, 70 },
+						{ 0x83126e978d4fdf3c, 73 },
+						{ 0xd1b71758e219652c, 77 },
+						{ 0xa7c5ac471b478424, 80 },
+						{ 0x8637bd05af6c69b6, 83 },
+						{ 0xd6bf94d5e57a42bd, 87 },
+						{ 0xabcc77118461cefd, 90 },
+						{ 0x89705f4136b4a598, 93 },
+						{ 0xdbe6fecebdedd5bf, 97 },
+						{ 0xafebff0bcb24aaff, 100 },
+						{ 0x8cbccc096f5088cc, 103 },
+						{ 0xe12e13424bb40e14, 107 },
+						{ 0xb424dc35095cd810, 110 },
+						{ 0x901d7cf73ab0acda, 113 },
+						{ 0xe69594bec44de15c, 117 },
+						{ 0x0, 127 },
+					};
 					return t;
 				}() };
 				return make_static<table>::value.data();
 			}() };
 		};
 
+		template<typename v_type, uint64_t divisor> struct multiply_and_shift;
+
+		template<uint_types v_type, uint64_t divisor> struct multiply_and_shift<v_type, divisor> {
+			static constexpr auto entry = mul_shift_table<v_type>::values[divisor_to_index<divisor>()];
+			VN_FORCE_INLINE static v_type impl(v_type value) noexcept {
+				static constexpr v_type m	= entry.multiplicand;
+				static constexpr uint64_t s = entry.shift;
+				return static_cast<v_type>((static_cast<uint64_t>(value) * m) >> s);
+			}
+		};
+
+		template<uint64_types v_type, uint64_t divisor>
+			requires(divisor < 100000000ULL)
+		struct multiply_and_shift<v_type, divisor> {
+			static constexpr auto entry = mul_shift_table<uint32_t>::values[divisor_to_index<divisor>()];
+			static constexpr v_type m	 = entry.multiplicand;
+			static constexpr uint64_t s	 = entry.shift;
+			VN_FORCE_INLINE static v_type impl(v_type value) noexcept {
+				return static_cast<v_type>((static_cast<uint64_t>(value) * m) >> s);
+			}
+		};
+
+		template<uint64_types v_type, uint64_t divisor>
+			requires(divisor >= 100000000ULL)
+		struct multiply_and_shift<v_type, divisor> {
+			static constexpr auto entry = mul_shift_table<v_type>::values[divisor_to_index<divisor>()];
+			static constexpr v_type m	 = entry.multiplicand;
+			static constexpr uint64_t s	 = entry.shift;
+			static_assert(s >= 64ULL);
+			VN_FORCE_INLINE static v_type impl(v_type value) noexcept {
+#if VN_COMPILER_CLANG || VN_COMPILER_GNU
+				return static_cast<v_type>(static_cast<__uint128_t>(value) * m >> s);
+#elif VN_COMPILER_MSVC
+				v_type high_part;
+				_umul128(m, value, &high_part);
+				return static_cast<v_type>(high_part >> (s - 64ULL));
+#else
+				return static_cast<v_type>(mulhi_portable(value, m) >> (s - 64ULL));
+#endif
+			}
+		};
+
+		template<typename v_type> struct fast_div_entry {
+			VN_ALIGN(64) v_type inv_odd;
+			VN_ALIGN(64) v_type max_quotient;
+			VN_ALIGN(64) v_type even_mask;
+		};
+
+		template<typename v_type> struct fast_div_table;
+
+		template<uint16_types v_type> struct fast_div_table<v_type> {
+			VN_ALIGN(64)
+			static constexpr const fast_div_entry<uint32_t>* __restrict values{ [] {
+				VN_ALIGN(64)
+				constexpr auto table{ [] {
+					std::array<fast_div_entry<uint32_t>, 4> t{
+						fast_div_entry<uint32_t>{ 0xcccccccd, 858993459, 1 },
+						{ 0xc28f5c29, 171798691, 3 },
+						{ 0x26e978d5, 34359738, 7 },
+						{ 0x3afb7e91, 6871947, 15 },
+					};
+					return t;
+				}() };
+				return make_static<table>::value.data();
+			}() };
+		};
+
+		template<uint32_types v_type> struct fast_div_table<v_type> {
+			VN_ALIGN(64)
+			static constexpr const fast_div_entry<uint32_t>* __restrict values{ [] {
+				VN_ALIGN(64)
+				constexpr auto table{ [] {
+					std::array<fast_div_entry<uint32_t>, 8> t{
+						fast_div_entry<uint32_t>{ 0xcccccccd, 858993459, 1 },
+						{ 0xc28f5c29, 171798691, 3 },
+						{ 0x26e978d5, 34359738, 7 },
+						{ 0x3afb7e91, 6871947, 15 },
+						{ 0xbcbe61d, 1374389, 31 },
+						{ 0x68c26139, 274877, 63 },
+						{ 0xae8d46a5, 54975, 127 },
+						{ 0x22e90e21, 10995, 255 },
+					};
+					return t;
+				}() };
+				return make_static<table>::value.data();
+			}() };
+		};
+
+		template<uint64_types v_type> struct fast_div_table<v_type> {
+			VN_ALIGN(64)
+			static constexpr const fast_div_entry<uint64_t>* __restrict values{ [] {
+				VN_ALIGN(64)
+				constexpr auto table{ [] {
+					std::array<fast_div_entry<uint64_t>, 18> t{
+						fast_div_entry<uint64_t>{ 0xcccccccccccccccd, 3689348814741910323, 1 },
+						{ 0x8f5c28f5c28f5c29, 737869762948382064, 3 },
+						{ 0x1cac083126e978d5, 147573952589676412, 7 },
+						{ 0xd288ce703afb7e91, 29514790517935282, 15 },
+						{ 0x5d4e8fb00bcbe61d, 5902958103587056, 31 },
+						{ 0x790fb65668c26139, 1180591620717411, 63 },
+						{ 0xe5032477ae8d46a5, 236118324143482, 127 },
+						{ 0xc767074b22e90e21, 47223664828696, 255 },
+						{ 0x8e47ce423a2e9c6d, 9444732965739, 511 },
+						{ 0x4fa7f60d3ed61f49, 1888946593147, 1023 },
+						{ 0xfee64690c913975, 377789318629, 2047 },
+						{ 0x3662e0e1cf503eb1, 75557863725, 4095 },
+						{ 0xa47a2cf9f6433fbd, 15111572745, 8191 },
+						{ 0x54186f653140a659, 3022314549, 16383 },
+						{ 0x7738164770402145, 604462909, 32767 },
+						{ 0xe4a4d1417cd9a041, 120892581, 65535 },
+						{ 0xc75429d9e5c5200d, 24178516, 131071 },
+						{ 0xc1773b91fac10669, 4835703, 262143 },
+					};
+					return t;
+				}() };
+				return make_static<table>::value.data();
+			}() };
+		};
+
+		template<uint_types v_type, uint64_t divisor> struct fast_divisibility;
+
+		template<uint16_types v_type, uint64_t divisor> struct fast_divisibility<v_type, divisor> {
+			static constexpr auto entry = fast_div_table<v_type>::values[divisor_to_index<divisor>()];
+			VN_FORCE_INLINE static bool impl(v_type value) noexcept {
+				const uint32_t v = static_cast<uint32_t>(value);
+				return ((v & entry.even_mask) == 0) & ((v * entry.inv_odd) <= entry.max_quotient);
+			}
+		};
+
+		template<uint32_types v_type, uint64_t divisor> struct fast_divisibility<v_type, divisor> {
+			static constexpr auto entry = fast_div_table<v_type>::values[divisor_to_index<divisor>()];
+			VN_FORCE_INLINE static bool impl(v_type value) noexcept {
+				return ((value & entry.even_mask) == 0) & ((value * entry.inv_odd) <= entry.max_quotient);
+			}
+		};
+
+		template<uint64_types v_type, uint64_t divisor> struct fast_divisibility<v_type, divisor> {
+			static constexpr auto entry = fast_div_table<v_type>::values[divisor_to_index<divisor>()];
+			VN_FORCE_INLINE static bool impl(v_type value) noexcept {
+				return ((value & entry.even_mask) == 0) & ((value * entry.inv_odd) <= entry.max_quotient);
+			}
+		};
+
+		VN_FORCE_INLINE static uint32_t count_trailing_decimal_zeros(uint64_t n) noexcept {
+			if (n == 0) [[unlikely]]
+				return 0;
+			uint32_t z = 0;
+			if (fast_divisibility<uint64_t, 10000000000000000ULL>::impl(n)) {
+				n = multiply_and_shift<uint64_t, 10000000000000000ULL>::impl(n);
+				z += 16;
+			}
+			if (fast_divisibility<uint64_t, 100000000ULL>::impl(n)) {
+				n = multiply_and_shift<uint64_t, 100000000ULL>::impl(n);
+				z += 8;
+			}
+			if (fast_divisibility<uint64_t, 10000>::impl(n)) {
+				n = multiply_and_shift<uint64_t, 10000>::impl(n);
+				z += 4;
+			}
+			if (fast_divisibility<uint64_t, 100>::impl(n)) {
+				n = multiply_and_shift<uint64_t, 100>::impl(n);
+				z += 2;
+			}
+			if (fast_divisibility<uint64_t, 10>::impl(n)) {
+				z += 1;
+			}
+			return z;
+		}
 	}
 
 }

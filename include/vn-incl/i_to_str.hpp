@@ -28,48 +28,6 @@ namespace vn {
 
 #endif
 
-		template<typename v_type, uint64_t divisor> struct multiply_and_shift;
-
-		template<uint_types v_type, uint64_t divisor> struct multiply_and_shift<v_type, divisor> {
-			static constexpr auto& entry = mul_shift_table<v_type>::values[divisor_to_index<divisor>()];
-			VN_FORCE_INLINE static v_type impl(v_type value) noexcept {
-				static constexpr v_type m	= entry.multiplicand;
-				static constexpr uint64_t s = entry.shift;
-				return static_cast<v_type>((static_cast<uint64_t>(value) * m) >> s);
-			}
-		};
-
-		template<uint64_types v_type, uint64_t divisor>
-			requires(divisor < 100000000ULL)
-		struct multiply_and_shift<v_type, divisor> {
-			static constexpr auto& entry = mul_shift_table<uint32_t>::values[divisor_to_index<divisor>()];
-			static constexpr v_type m	 = entry.multiplicand;
-			static constexpr uint64_t s	 = entry.shift;
-			VN_FORCE_INLINE static v_type impl(v_type value) noexcept {
-				return static_cast<v_type>((static_cast<uint64_t>(value) * m) >> s);
-			}
-		};
-
-		template<uint64_types v_type, uint64_t divisor>
-			requires(divisor >= 100000000ULL)
-		struct multiply_and_shift<v_type, divisor> {
-			static constexpr auto& entry = mul_shift_table<v_type>::values[divisor_to_index<divisor>()];
-			static constexpr v_type m	 = entry.multiplicand;
-			static constexpr uint64_t s	 = entry.shift;
-			static_assert(s >= 64ULL);
-			VN_FORCE_INLINE static v_type impl(v_type value) noexcept {
-#if VN_COMPILER_CLANG || VN_COMPILER_GNU
-				return static_cast<v_type>(static_cast<__uint128_t>(value) * m >> s);
-#elif VN_COMPILER_MSVC
-				v_type high_part;
-				_umul128(m, value, &high_part);
-				return static_cast<v_type>(high_part >> (s - 64ULL));
-#else
-				return static_cast<v_type>(mulhi_portable(value, m) >> (s - 64ULL));
-#endif
-			}
-		};
-
 		template<typename v_type, uint64_t digit_length> struct to_chars_internal;
 
 		template<typename v_type> struct to_chars_impl;
