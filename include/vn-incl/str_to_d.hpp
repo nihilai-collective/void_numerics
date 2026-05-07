@@ -18,7 +18,7 @@ namespace vn {
 			}
 			return { end, std::errc{} };
 		} else {
-			auto r = std::from_chars(first, last, value, base);
+			auto r = std::from_chars(first, last, value, std::chars_format::general);
 			return { r.ptr, r.ec };
 		}
 	}

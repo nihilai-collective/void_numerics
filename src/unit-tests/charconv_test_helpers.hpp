@@ -179,6 +179,7 @@ template<typename L1, typename L2> constexpr auto concat(L1, L2) -> concat_t<L1,
 	return {};
 }
 
+static constexpr auto all_floats = type_list<float, double>();
 static constexpr auto all_signed   = type_list<char, signed char, short, int, long, long long>();
 static constexpr auto all_unsigned = type_list<unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long>();
 static constexpr auto integrals	   = concat(all_unsigned, all_signed);

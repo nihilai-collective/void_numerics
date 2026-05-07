@@ -32,11 +32,6 @@ namespace vn {
 
 		template<typename v_type> struct to_chars_impl;
 
-		static constexpr const auto* __restrict char_table_1_digit_data = int_tables<1>::values;
-		static constexpr const auto* __restrict char_table_2_digit_data = int_tables<2>::values;
-		static constexpr const auto* __restrict char_table_3_digit_data = int_tables<3>::values;
-		static constexpr const auto* __restrict char_table_4_digit_data = int_tables<4>::values;
-
 		template<uint_types v_type> struct to_chars_internal<v_type, 1ULL> {
 			VN_FORCE_INLINE static char* impl(char* __restrict buf, const v_type value) noexcept {
 				*buf = char_table_1_digit_data[value];

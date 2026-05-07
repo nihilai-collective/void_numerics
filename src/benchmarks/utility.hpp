@@ -243,7 +243,6 @@ namespace benchmarks {
 			digit_iterator<stage_name + "-uint64", test_size, total_iters, sub_iters, measured_iters, uint64_t, correctness_verifier, digit_generator_type, test_types...>::impl();
 		result_data_final += result_data;
 		print_total_win_counts(result_data);
-		print_total_win_counts(result_data_final);
 		return result_data_final;
 	}
 
@@ -251,11 +250,11 @@ namespace benchmarks {
 		template<uint64_t, uint64_t, uint64_t, typename, uint64_t, uint64_t, bool> typename digit_generator_type, typename... test_types>
 	struct tests {
 		static void impl() {
-			//auto result_data = test_function_impl<stage_name, 100, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
+			auto result_data = test_function_impl<stage_name, 100, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
 			//result_data += test_function_impl<stage_name, 1000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
 			//result_data += test_function_impl<stage_name, 10000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
 			//result_data += test_function_impl<stage_name, 100000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
-			auto result_data = test_function_impl<stage_name, 1000000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
+			//auto result_data = test_function_impl<stage_name, 1000000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
 			print_total_win_counts(result_data);
 		}
 	};

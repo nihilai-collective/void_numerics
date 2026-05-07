@@ -548,7 +548,12 @@ namespace vn {
 				z += 1;
 			}
 			return z;
-		}
+		}		
+
+		static constexpr const auto* __restrict char_table_1_digit_data = int_tables<1>::values;
+		static constexpr const auto* __restrict char_table_2_digit_data = int_tables<2>::values;
+		static constexpr const auto* __restrict char_table_3_digit_data = int_tables<3>::values;
+		static constexpr const auto* __restrict char_table_4_digit_data = int_tables<4>::values;
 	}
 
 }
