@@ -158,6 +158,30 @@ Results report MB/s throughput per library, per benchmark stage, with win-tallie
 
 ---
 
+## Memory Footprint
+
+`vn::to_chars` uses a precomputed lookup table of approximately 40KB to enable 
+branch-free digit pair extraction. This is well-suited to any CPU with an L2 
+cache of 256KB or larger (all modern desktop, server, and laptop CPUs) — the 
+table comfortably resides in L2 while streaming integer data flows through L1, 
+with no contention between the two. Benchmarks demonstrate this behavior holds 
+even under explicit cache-eviction pressure between runs.
+
+`vn::from_chars` carries no significant lookup tables and is suitable for any 
+target.
+
+`vn::to_chars` is **not recommended for**:
+
+- Microcontrollers without L2 cache (Cortex-M0/M3/M4/M7, AVR, MSP430) — the 
+  table cannot fit in available cache or SRAM
+- Embedded targets where total flash/SRAM is smaller than the lookup table itself
+- Any environment where the 40KB constant data footprint is unacceptable for 
+  binary size reasons
+
+For these targets, `std::to_chars` will be more appropriate.
+
+---
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

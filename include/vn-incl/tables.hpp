@@ -157,6 +157,20 @@ namespace vn {
 				}() };
 				return make_static<table>::value.data();
 			}() };
+
+			VN_ALIGN(64)
+			static constexpr const char* __restrict values_02{ [] {
+				VN_ALIGN(64)
+				constexpr auto table{ [] {
+					std::array<char, 200> t{};
+					for (uint32_t n = 0; n < 100; ++n) {
+						t[n * 2] |= '0' + (n / 10);
+						t[n * 2 + 1] |= '0' + (n % 10);
+					}
+					return t;
+				}() };
+				return make_static<table>::value.data();
+			}() };
 		};
 
 		template<typename v_type> struct int_tables_impl<std::endian::little, 3, v_type> {
