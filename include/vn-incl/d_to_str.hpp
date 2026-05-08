@@ -11,6 +11,33 @@ namespace vn {
 
 	namespace detail {
 
+			template<typename typeName> struct fiwb {
+			VN_ALIGN(64ULL)
+			inline static constexpr char charTable01[]{ 0x30, 0x30, 0x30, 0x31, 0x30, 0x32, 0x30, 0x33, 0x30, 0x34, 0x30, 0x35, 0x30, 0x36, 0x30, 0x37, 0x30, 0x38, 0x30, 0x39,
+				0x31, 0x30, 0x31, 0x31, 0x31, 0x32, 0x31, 0x33, 0x31, 0x34, 0x31, 0x35, 0x31, 0x36, 0x31, 0x37, 0x31, 0x38, 0x31, 0x39, 0x32, 0x30, 0x32, 0x31, 0x32, 0x32, 0x32,
+				0x33, 0x32, 0x34, 0x32, 0x35, 0x32, 0x36, 0x32, 0x37, 0x32, 0x38, 0x32, 0x39, 0x33, 0x30, 0x33, 0x31, 0x33, 0x32, 0x33, 0x33, 0x33, 0x34, 0x33, 0x35, 0x33, 0x36,
+				0x33, 0x37, 0x33, 0x38, 0x33, 0x39, 0x34, 0x30, 0x34, 0x31, 0x34, 0x32, 0x34, 0x33, 0x34, 0x34, 0x34, 0x35, 0x34, 0x36, 0x34, 0x37, 0x34, 0x38, 0x34, 0x39, 0x35,
+				0x30, 0x35, 0x31, 0x35, 0x32, 0x35, 0x33, 0x35, 0x34, 0x35, 0x35, 0x35, 0x36, 0x35, 0x37, 0x35, 0x38, 0x35, 0x39, 0x36, 0x30, 0x36, 0x31, 0x36, 0x32, 0x36, 0x33,
+				0x36, 0x34, 0x36, 0x35, 0x36, 0x36, 0x36, 0x37, 0x36, 0x38, 0x36, 0x39, 0x37, 0x30, 0x37, 0x31, 0x37, 0x32, 0x37, 0x33, 0x37, 0x34, 0x37, 0x35, 0x37, 0x36, 0x37,
+				0x37, 0x37, 0x38, 0x37, 0x39, 0x38, 0x30, 0x38, 0x31, 0x38, 0x32, 0x38, 0x33, 0x38, 0x34, 0x38, 0x35, 0x38, 0x36, 0x38, 0x37, 0x38, 0x38, 0x38, 0x39, 0x39, 0x30,
+				0x39, 0x31, 0x39, 0x32, 0x39, 0x33, 0x39, 0x34, 0x39, 0x35, 0x39, 0x36, 0x39, 0x37, 0x39, 0x38, 0x39, 0x39 };
+			VN_ALIGN(64ULL)
+			inline static constexpr uint16_t charTable02[]{ 0x3030, 0x3130, 0x3230, 0x3330, 0x3430, 0x3530, 0x3630, 0x3730, 0x3830, 0x3930, 0x3031, 0x3131, 0x3231, 0x3331, 0x3431,
+				0x3531, 0x3631, 0x3731, 0x3831, 0x3931, 0x3032, 0x3132, 0x3232, 0x3332, 0x3432, 0x3532, 0x3632, 0x3732, 0x3832, 0x3932, 0x3033, 0x3133, 0x3233, 0x3333, 0x3433,
+				0x3533, 0x3633, 0x3733, 0x3833, 0x3933, 0x3034, 0x3134, 0x3234, 0x3334, 0x3434, 0x3534, 0x3634, 0x3734, 0x3834, 0x3934, 0x3035, 0x3135, 0x3235, 0x3335, 0x3435,
+				0x3535, 0x3635, 0x3735, 0x3835, 0x3935, 0x3036, 0x3136, 0x3236, 0x3336, 0x3436, 0x3536, 0x3636, 0x3736, 0x3836, 0x3936, 0x3037, 0x3137, 0x3237, 0x3337, 0x3437,
+				0x3537, 0x3637, 0x3737, 0x3837, 0x3937, 0x3038, 0x3138, 0x3238, 0x3338, 0x3438, 0x3538, 0x3638, 0x3738, 0x3838, 0x3938, 0x3039, 0x3139, 0x3239, 0x3339, 0x3439,
+				0x3539, 0x3639, 0x3739, 0x3839, 0x3939 };
+			VN_ALIGN(64ULL)
+			inline static constexpr auto charTable04{ [] {
+				std::array<uint32_t, 10000> return_values{};
+				for (uint32_t i = 0; i < 10000; ++i) {
+					return_values[i] = (0x30 + (i / 1000)) | ((0x30 + ((i / 100) % 10)) << 8) | ((0x30 + ((i / 10) % 10)) << 16) | ((0x30 + (i % 10)) << 24);
+				}
+				return return_values;
+			}() };
+		};
+
 		VN_FORCE_INLINE auto* write_64_len_15_to_17_trim(auto* buf, uint64_t sig) noexcept {
 			const uint32_t tz = count_trailing_decimal_zeros(sig);
 
@@ -35,6 +62,71 @@ namespace vn {
 			return buf + 16 - tz;
 		}
 
+		inline constexpr uint8_t decTrailingZeroTable[] = { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+			0, 0, 0, 0 };
+
+		VN_FORCE_INLINE auto* writeu64Len15To17Trim(auto* buf, uint64_t sig) noexcept {
+			uint32_t tz1, tz2, tz;
+			const uint64_t abbccddee = multiply_and_shift<uint64_t, 100000000>::impl(sig);
+			const uint64_t ffgghhii	 = sig - abbccddee * 100000000;
+			uint32_t abbcc			 = multiply_and_shift<uint64_t, 10000>::impl(abbccddee);
+			uint32_t ddee			 = abbccddee - abbcc * 10000;
+			uint32_t abb			 = uint32_t((uint64_t(abbcc) * 167773) >> 24);
+			uint32_t a				 = (abb * 41) >> 12;
+			uint32_t bb				 = abb - a * 100;
+			uint32_t cc				 = abbcc - abb * 100;
+			buf[0]					 = uint8_t(a + '0');
+			buf += a > 0;
+			bool lz = bb < 10 && a == 0;
+			std::memcpy(buf, fiwb<void>::charTable01 + (bb * 2 + lz), 2);
+			buf -= lz;
+			std::memcpy(buf + 2, fiwb<void>::charTable02 + cc, 2);
+
+			if (ffgghhii) {
+				uint32_t ffgg = uint32_t((uint64_t(ffgghhii) * 109951163) >> 40);
+				uint32_t hhii = ffgghhii - ffgg * 10000;
+				uint32_t ff	  = (ffgg * 5243) >> 19;
+				uint32_t gg	  = ffgg - ff * 100;
+				std::memcpy(buf + 4, fiwb<void>::charTable04.data() + ddee, 4);
+				std::memcpy(buf + 8, fiwb<void>::charTable04.data() + ffgg, 4);
+				std::memcpy(buf + 10, fiwb<void>::charTable02 + gg, 2);
+				if (hhii) {
+					uint32_t hh = (hhii * 5243) >> 19;
+					uint32_t ii = hhii - hh * 100;
+					std::memcpy(buf + 12, fiwb<void>::charTable04.data() + hhii, 4);
+					tz1 = decTrailingZeroTable[hh];
+					tz2 = decTrailingZeroTable[ii];
+					tz	= hhii ? tz2 : (tz1 + 2);
+					buf += 16 - tz;
+					return buf;
+				} else {
+					tz1 = decTrailingZeroTable[ff];
+					tz2 = decTrailingZeroTable[gg];
+					tz	= gg ? tz2 : (tz1 + 2);
+					buf += 12 - tz;
+					return buf;
+				}
+			} else {
+				if (ddee) {
+					uint32_t dd = (ddee * 5243) >> 19;
+					uint32_t ee = ddee - dd * 100;
+					std::memcpy(buf + 4, fiwb<void>::charTable04.data() + ddee, 4);
+					tz1 = decTrailingZeroTable[dd];
+					tz2 = decTrailingZeroTable[ee];
+					tz	= ee ? tz2 : (tz1 + 2);
+					buf += 8 - tz;
+					return buf;
+				} else {
+					tz1 = decTrailingZeroTable[bb];
+					tz2 = decTrailingZeroTable[cc];
+					tz	= cc ? tz2 : (tz1 + tz2);
+					buf += 4 - tz;
+					return buf;
+				}
+			}
+		}
+
 		consteval uint32_t numbits(uint32_t x) noexcept {
 			return x < 2 ? x : 1 + numbits(x >> 1);
 		}
@@ -52,7 +144,8 @@ namespace vn {
 				static_assert(std::numeric_limits<v_type>::radix == 2);
 				static_assert(std::is_same_v<float, v_type> || std::is_same_v<double, v_type>);
 				static_assert(sizeof(float) == 4 && sizeof(double) == 8);
-				using Raw					   = std::conditional_t<std::is_same_v<float, v_type>, uint32_t, uint64_t>;
+				constexpr bool is_float = std::is_same_v<float, v_type>;
+				using Raw				= std::conditional_t<std::is_same_v<float, v_type>, uint32_t, uint64_t>;
 
 				if (val == 0.0) {
 					*buf = '-';
@@ -73,9 +166,9 @@ namespace vn {
 					return buf + 4;
 				}
 
-				*buf							 = '-';
-				static constexpr auto zero_local = v_type(0.0);
-				buf += (val < zero_local);
+				*buf				= '-';
+				constexpr auto zero = v_type(0.0);
+				buf += (val < zero);
 
 				const auto v = jkj::dragonbox::to_decimal_ex(s, exp_bits, jkj::dragonbox::policy::sign::ignore, jkj::dragonbox::policy::trailing_zero::ignore);
 
@@ -90,7 +183,7 @@ namespace vn {
 				if (-6 < dot_pos && dot_pos <= 21) {
 					if (dot_pos <= 0) {
 						auto num_hdr = buf + (2 - dot_pos);
-						auto num_end = write_64_len_15_to_17_trim(num_hdr, sig_dec);
+						auto num_end = writeu64Len15To17Trim(num_hdr, sig_dec);
 						buf[0]		 = '0';
 						buf[1]		 = '.';
 						buf += 2;
@@ -99,33 +192,31 @@ namespace vn {
 					} else {
 						std::memset(buf, '0', 24);
 						auto num_hdr = buf + 1;
-						auto num_end = write_64_len_15_to_17_trim(num_hdr, sig_dec);
+						auto num_end = writeu64Len15To17Trim(num_hdr, sig_dec);
 						std::memmove(buf, buf + 1, size_t(dot_pos));
 						buf[dot_pos] = '.';
 						return ((num_end - num_hdr) <= dot_pos) ? buf + dot_pos : num_end;
 					}
 				} else {
-					auto end = write_64_len_15_to_17_trim(buf + 1, sig_dec);
+					auto end = writeu64Len15To17Trim(buf + 1, sig_dec);
 					end -= (end == buf + 2);
 					exp_dec += sig_len - 1;
 					buf[0] = buf[1];
 					buf[1] = '.';
-					end[0] = 'e';
+					end[0] = 'E';
 					buf	   = end + 1;
 					buf[0] = '-';
 					buf += exp_dec < 0;
-					exp_dec = static_cast<int32_t>(abs(exp_dec));
-					if (exp_dec < 10) {
-						buf[0] = char_table_1_digit_data[exp_dec];
-						return buf + 1;
-					} else if (exp_dec < 100) {
-						std::memcpy(buf, char_table_2_digit_data + exp_dec, 2);
-						return buf + 2;
+					exp_dec = abs(exp_dec);
+					if (exp_dec < 100) {
+						uint32_t lz = exp_dec < 10;
+						std::memcpy(buf, fiwb<void>::charTable01 + (exp_dec * 2 + lz), 2);
+						return buf + 2 - lz;
 					} else {
 						const uint32_t hi = (uint32_t(exp_dec) * 656) >> 16;
 						const uint32_t lo = uint32_t(exp_dec) - hi * 100;
 						buf[0]			  = uint8_t(hi) + '0';
-						std::memcpy(&buf[1], char_table_2_digit_data + lo, 2);
+						std::memcpy(&buf[1], fiwb<void>::charTable01 + (lo * 2), 2);
 						return buf + 3;
 					}
 				}

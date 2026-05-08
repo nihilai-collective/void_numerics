@@ -251,10 +251,112 @@ namespace benchmarks {
 	struct tests {
 		static void impl() {
 			auto result_data = test_function_impl<stage_name, 100, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
-			//result_data += test_function_impl<stage_name, 1000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
-			//result_data += test_function_impl<stage_name, 10000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
-			//result_data += test_function_impl<stage_name, 100000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
-			//auto result_data = test_function_impl<stage_name, 1000000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
+			result_data += test_function_impl<stage_name, 1000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
+			result_data += test_function_impl<stage_name, 10000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
+			result_data += test_function_impl<stage_name, 100000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
+			result_data += test_function_impl<stage_name, 1000000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
+			print_total_win_counts(result_data);
+		}
+	};
+
+	template<typename v_type>
+		requires(std::is_floating_point_v<v_type>)
+	struct max_exponent {
+		static constexpr int64_t max_value = static_cast<int64_t>(std::numeric_limits<v_type>::max_exponent10);
+		static constexpr int64_t min_value = static_cast<int64_t>(std::numeric_limits<v_type>::min_exponent10);
+	};
+
+	template<typename v_type> static constexpr int64_t max_exponent_v = max_exponent<v_type>::max_value;
+	template<typename v_type> static constexpr int64_t min_exponent_v = max_exponent<v_type>::min_value;
+
+	template<typename v_type>
+		requires(std::is_floating_point_v<v_type>)
+	static constexpr uint64_t max_chars_v = 32;
+
+	template<typename v_type, int64_t min_exp, int64_t max_exp>
+		requires(std::is_floating_point_v<v_type> && max_exp > min_exp)
+	struct random_double_value {
+		VN_FORCE_INLINE static v_type impl() {
+			thread_local std::mt19937_64 rng{ std::random_device{}() };
+			std::uniform_int_distribution<int64_t> exp_dist{ min_exp, max_exp - 1 };
+			std::uniform_real_distribution<v_type> mantissa_dist{ static_cast<v_type>(1.0), static_cast<v_type>(10.0) };
+			return static_cast<v_type>(mantissa_dist(rng) * std::pow(static_cast<v_type>(10.0), static_cast<v_type>(exp_dist(rng))));
+		}
+	};
+
+	template<uint64_t test_size, uint64_t sub_iters, uint64_t total_iters, typename float_type, int64_t min_exp, int64_t max_exp, bool negative>
+		requires(std::is_floating_point_v<float_type>)
+	struct double_generator {
+		using test_data_type   = std::vector<float_type>;
+		using output_data_type = std::vector<char>;
+		static constexpr uint64_t type_size{ max_chars_v<float_type> };
+		static test_data_type impl() {
+			test_data_type data{};
+			data.resize(test_size * total_iters * sub_iters);
+			for (uint64_t x = 0; x < data.size(); ++x) {
+				float_type value = random_double_value<float_type, min_exp, max_exp>::impl();
+				data[x]			 = negative ? -value : value;
+			}
+			return data;
+		}
+	};
+
+	template<bnch_swt::string_literal test_name, uint64_t test_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters, typename float_type,
+		typename correctness_verifier, template<uint64_t, uint64_t, uint64_t, typename, int64_t, int64_t, bool> typename double_generator_type, bool negative,
+		typename result_data_type, typename... test_types>
+		requires(std::is_floating_point_v<float_type>)
+	static void mixed_exponent_range(result_data_type& result_data) {
+		static constexpr int64_t min_exp = min_exponent_v<float_type>;
+		static constexpr int64_t max_exp = max_exponent_v<float_type>;
+		static constexpr bnch_swt::string_literal name{ test_name + "-mixed-exponents" + "-test-size[" + bnch_swt::internal::to_string_literal<test_size>() + "]" };
+		auto test_data			 = double_generator_type<test_size, sub_iters, total_iters, float_type, min_exp, max_exp, negative>::impl();
+		using output_buffer_type = typename double_generator_type<test_size, sub_iters, total_iters, float_type, min_exp, max_exp, negative>::output_data_type;
+		static constexpr uint64_t type_size{ double_generator_type<test_size, sub_iters, total_iters, float_type, min_exp, max_exp, negative>::type_size };
+		output_buffer_type output_buffer(total_iters * test_size * sub_iters * type_size, 0);
+		using test_data_type = decltype(test_data);
+		result_data += run_one_test<name, test_size, total_iters, sub_iters, measured_iters, correctness_verifier, test_data_type, output_buffer_type, test_types...>(test_data,
+			output_buffer);
+	}
+
+	template<bnch_swt::string_literal test_name, uint64_t test_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters, typename float_type,
+		typename correctness_verifier, template<uint64_t, uint64_t, uint64_t, typename, int64_t, int64_t, bool> typename double_generator_type, typename... test_types>
+		requires(std::is_floating_point_v<float_type>)
+	struct double_iterator {
+		static auto impl() {
+			using bench			   = bnch_swt::benchmark_stage<test_name, total_iters, measured_iters, bnch_swt::benchmark_types::cpu>;
+			using result_data_type = decltype(bench::get_results());
+			result_data_type result_data{};
+			mixed_exponent_range<test_name + "-negative", test_size, total_iters, sub_iters, measured_iters, float_type, correctness_verifier, double_generator_type, true,
+				result_data_type, test_types...>(result_data);
+			mixed_exponent_range<test_name + "-positive", test_size, total_iters, sub_iters, measured_iters, float_type, correctness_verifier, double_generator_type, false,
+				result_data_type, test_types...>(result_data);
+			return result_data;
+		}
+	};
+
+	template<bnch_swt::string_literal stage_name, uint64_t test_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters, typename correctness_verifier,
+		template<uint64_t, uint64_t, uint64_t, typename, int64_t, int64_t, bool> typename double_generator_type, typename... test_types>
+	auto double_test_function_impl() {
+		auto result_data =
+			double_iterator<stage_name + "-float", test_size, total_iters, sub_iters, measured_iters, float, correctness_verifier, double_generator_type, test_types...>::impl();
+		print_total_win_counts(result_data);
+		auto result_data_final = result_data;
+		result_data =
+			double_iterator<stage_name + "-double", test_size, total_iters, sub_iters, measured_iters, double, correctness_verifier, double_generator_type, test_types...>::impl();
+		print_total_win_counts(result_data);
+		result_data_final += result_data;
+		return result_data_final;
+	}
+
+	template<bnch_swt::string_literal stage_name, vn::detail::conversion_classes conversion_class, uint64_t total_iters, uint64_t measured_iters, typename correctness_verifier,
+		template<uint64_t, uint64_t, uint64_t, typename, int64_t, int64_t, bool> typename double_generator_type, typename... test_types>
+	struct double_tests {
+		static void impl() {
+			auto result_data = double_test_function_impl<stage_name, 100, total_iters, 10, measured_iters, correctness_verifier, double_generator_type, test_types...>();
+			result_data += double_test_function_impl<stage_name, 1000, total_iters, 10, measured_iters, correctness_verifier, double_generator_type, test_types...>();
+			result_data += double_test_function_impl<stage_name, 10000, total_iters, 10, measured_iters, correctness_verifier, double_generator_type, test_types...>();
+			result_data += double_test_function_impl<stage_name, 100000, total_iters, 10, measured_iters, correctness_verifier, double_generator_type, test_types...>();
+			result_data += double_test_function_impl<stage_name, 1000000, total_iters, 10, measured_iters, correctness_verifier, double_generator_type, test_types...>();
 			print_total_win_counts(result_data);
 		}
 	};

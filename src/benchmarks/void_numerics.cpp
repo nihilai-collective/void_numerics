@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Nihilai Collective Corp
 
 #include "i_to_str.hpp"
+#include "d_to_str.hpp"
 #include "str_to_i.hpp"
 
 #if defined(NDEBUG)
@@ -13,6 +14,10 @@ static constexpr uint64_t measured_iterations{ 1 };
 #endif
 
 int main() {
+	benchmarks::double_tests<"d-to-str", vn::detail::conversion_classes::d_to_str, total_iterations, measured_iterations, d_to_str_tests::verify_double_correctness,
+		d_to_str_tests::double_generator, benchmarks::test_holder<"vn", i_to_str_tests::conversion_benchmark<d_to_str_tests::vn_double_op>>,
+		benchmarks::test_holder<"std", i_to_str_tests::conversion_benchmark<d_to_str_tests::std_double_op>>,
+		benchmarks::test_holder<"fmt", i_to_str_tests::conversion_benchmark<d_to_str_tests::fmt_double_op>>>::impl();
 	benchmarks::tests<"int-to-str", vn::detail::conversion_classes::i_to_str, total_iterations, measured_iterations, i_to_str_tests::verify_correctness,
 		i_to_str_tests::digit_generator, benchmarks::test_holder<"std::to_chars", i_to_str_tests::conversion_benchmark<i_to_str_tests::std_op>>,
 		benchmarks::test_holder<"jeaiii::to_text", i_to_str_tests::conversion_benchmark<i_to_str_tests::jeaiii_op>>,
