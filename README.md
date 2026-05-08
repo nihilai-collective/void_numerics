@@ -10,7 +10,7 @@
 
 The C++ standard library's `<charconv>` is already fast. `void_numerics` is faster — substantially so on hot integer-conversion paths — without sacrificing correctness, portability, or API compatibility.
 
-Every conversion is exhaustively unit-tested against `std::to_chars` / `std::from_chars` (including the LLVM libc++ test suite) and benchmarked against `std`, `jeaiii`, `fmt`, and `strtoll`/`strtoull` across 8-, 16-, 32-, and 64-bit signed and unsigned integer types.
+Every conversion is exhaustively unit-tested against `std::to_chars` / `std::from_chars` (including the LLVM libc++ test suite) and benchmarked against `std`, `jeaiii`, `fmt`, and `strtoll`/`strtoull` across 8-, 16-, 32-, and 64-bit signed and uint32_t integer types.
 
 ---
 
@@ -79,7 +79,7 @@ auto r = vn::to_chars(buf, buf + 32, 0xDEADBEEF, 16);
 
 ```cpp
 template<integer_types v_type>
-std::to_chars_result to_chars(char* first, char* last, v_type value, int base = 10) noexcept;
+std::to_chars_result to_chars(char* first, char* last, v_type value, int32_t base = 10) noexcept;
 ```
 
 Writes the textual representation of `value` to `[first, last)`. Returns `{ptr, std::errc{}}` on success, where `ptr` is one past the last character written. Returns `{last, std::errc::value_too_large}` if the buffer is too small.
@@ -88,7 +88,7 @@ Writes the textual representation of `value` to `[first, last)`. Returns `{ptr, 
 
 ```cpp
 template<integer_types v_type>
-std::from_chars_result from_chars(const char* first, const char* last, v_type& value, int base = 10) noexcept;
+std::from_chars_result from_chars(const char* first, const char* last, v_type& value, int32_t base = 10) noexcept;
 ```
 
 Parses an integer from `[first, last)` into `value`. Returns `{ptr, std::errc{}}` on success, where `ptr` points to the first character not consumed. Returns `{first, std::errc::invalid_argument}` if no characters could be parsed.

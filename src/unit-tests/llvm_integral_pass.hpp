@@ -11,7 +11,7 @@
 // <charconv>
 
 // constexpr from_chars_result from_chars(const char* first, const char* last,
-//                                        Integral& value, int base = 10)
+//                                        Integral& value, int32_t base = 10)
 
 #include <charconv>
 #include <system_error>

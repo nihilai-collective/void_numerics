@@ -49,6 +49,7 @@ target_compile_options(${PROJECT_NAME}
             $<$<CONFIG:Release>:/O2 /Ob2 /GL /arch:AVX2 /fp:fast /GS- /Gy>
             $<$<CONFIG:Debug>:/Od /Zi /RTC1>
             $<$<BOOL:${VN_ASAN}>:/fsanitize=address>
+            /arch:AVX2
         >
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:
             $<$<AND:$<CONFIG:Release>,$<NOT:$<BOOL:${VN_ASAN}>>>:

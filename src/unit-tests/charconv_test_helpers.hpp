@@ -87,11 +87,11 @@ template<typename X> struct to_chars_test_base {
 
 	template<typename... Ts> TEST_CONSTEXPR_CXX23 void test_value(X v, Ts... args) {
 		std::to_chars_result r;
-		std::iota(buf, buf + sizeof(buf), static_cast<unsigned char>(1));
+		std::iota(buf, buf + sizeof(buf), static_cast<uint8_t>(1));
 		r = vn::to_chars(buf, buf + sizeof(buf), v, args...);
 		assert(r.ec == std::errc{});
 		for (auto i = r.ptr - buf; i < static_cast<decltype(i)>(sizeof(buf)); ++i)
-			assert(static_cast<unsigned char>(buf[static_cast<uint64_t>(i)]) == i + 1);
+			assert(static_cast<uint8_t>(buf[static_cast<uint64_t>(i)]) == i + 1);
 		*r.ptr = '\0';
 		{
 			auto a = fromchars_impl(buf, r.ptr, args...);
@@ -104,7 +104,7 @@ template<typename X> struct to_chars_test_base {
 	}
 
   private:
-	static TEST_CONSTEXPR_CXX23 long long fromchars_impl(char const* p, char const* ep, int base, true_type) {
+	static TEST_CONSTEXPR_CXX23 long long fromchars_impl(char const* p, char const* ep, int32_t base, true_type) {
 		char* last;
 		long long r;
 		last = const_cast<char*>(vn::from_chars(p, ep, r, base).ptr);
@@ -113,16 +113,16 @@ template<typename X> struct to_chars_test_base {
 		return r;
 	}
 
-	static TEST_CONSTEXPR_CXX23 unsigned long long fromchars_impl(char const* p, char const* ep, int base, false_type) {
+	static TEST_CONSTEXPR_CXX23 uint64_t fromchars_impl(char const* p, char const* ep, int32_t base, false_type) {
 		char* last;
-		unsigned long long r;
+		uint64_t r;
 		last = const_cast<char*>(vn::from_chars(p, ep, r, base).ptr);
 		assert(last == ep);
 
 		return r;
 	}
 
-	static TEST_CONSTEXPR_CXX23 auto fromchars_impl(char const* p, char const* ep, int base = 10) -> decltype(fromchars_impl(p, ep, base, std::is_signed<X>())) {
+	static TEST_CONSTEXPR_CXX23 auto fromchars_impl(char const* p, char const* ep, int32_t base = 10) -> decltype(fromchars_impl(p, ep, base, std::is_signed<X>())) {
 		return fromchars_impl(p, ep, base, std::is_signed<X>());
 	}
 
@@ -180,12 +180,12 @@ template<typename L1, typename L2> constexpr auto concat(L1, L2) -> concat_t<L1,
 }
 
 static constexpr auto all_floats = type_list<float, double>();
-static constexpr auto all_signed   = type_list<char, signed char, short, int, long, long long>();
-static constexpr auto all_unsigned = type_list<unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long>();
+static constexpr auto all_signed   = type_list<char, signed char, short, int32_t, long, long long>();
+static constexpr auto all_unsigned = type_list<uint8_t, uint32_t short, uint32_t, uint64_t, uint64_t>();
 static constexpr auto integrals	   = concat(all_unsigned, all_signed);
 
 template<template<typename> class Fn, typename... Ts> TEST_CONSTEXPR_CXX23 void run(type_list<Ts...>) {
-	int ls[sizeof...(Ts)] = { (Fn<Ts>{}(), 0)... };
+	int32_t ls[sizeof...(Ts)] = { (Fn<Ts>{}(), 0)... };
 	( void )ls;
 }
 

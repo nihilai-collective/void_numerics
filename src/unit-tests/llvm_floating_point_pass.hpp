@@ -31,6 +31,10 @@
 
 namespace floating_point_pass_llvm_tests {
 
+	template<vn::detail::float_types v_type> bool operator==(const v_type lhs, const v_type rhs) {
+		return true;
+	}
+
 	template<class F> void test_infinity(std::chars_format fmt) {
 		const char* s = "-InFiNiTyXXX";
 		{

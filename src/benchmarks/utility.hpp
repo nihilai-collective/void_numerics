@@ -187,21 +187,10 @@ namespace benchmarks {
 			using bench			   = bnch_swt::benchmark_stage<test_name, total_iters, measured_iters, bnch_swt::benchmark_types::cpu>;
 			using result_data_type = decltype(bench::get_results());
 			result_data_type result_data{};
-			mixed_digit_count<test_name, test_size, total_iters, sub_iters, measured_iters, v_type, correctness_verifier, digit_generator_type, false, result_data_type,
-				test_types...>(result_data);
-			return result_data;
-		}
-	};
-
-	template<bnch_swt::string_literal test_name, uint64_t test_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters, vn::detail::int_types v_type,
-		typename correctness_verifier, template<uint64_t, uint64_t, uint64_t, typename, uint64_t, uint64_t, bool> typename digit_generator_type, typename... test_types>
-	struct digit_iterator<test_name, test_size, total_iters, sub_iters, measured_iters, v_type, correctness_verifier, digit_generator_type, test_types...> {
-		static auto impl() {
-			using bench			   = bnch_swt::benchmark_stage<test_name, total_iters, measured_iters, bnch_swt::benchmark_types::cpu>;
-			using result_data_type = decltype(bench::get_results());
-			result_data_type result_data{};
-			mixed_digit_count<test_name + "-negative", test_size, total_iters, sub_iters, measured_iters, v_type, correctness_verifier, digit_generator_type, true,
-				result_data_type, test_types...>(result_data);
+			if constexpr (vn::detail::int_types<v_type>) {
+				mixed_digit_count<test_name + "-negative", test_size, total_iters, sub_iters, measured_iters, v_type, correctness_verifier, digit_generator_type, true,
+					result_data_type, test_types...>(result_data);
+			}
 			mixed_digit_count<test_name + "-positive", test_size, total_iters, sub_iters, measured_iters, v_type, correctness_verifier, digit_generator_type, false,
 				result_data_type, test_types...>(result_data);
 			return result_data;

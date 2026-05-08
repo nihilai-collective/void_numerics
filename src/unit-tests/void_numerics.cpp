@@ -13,7 +13,7 @@
 #include "llvm_integral_pass.hpp"
 #include "llvm_floating_point_pass.hpp"
 
-int main(int, char**) {
+int32_t main(int32_t, char**) {
 	double val{ 3.333e307 };
 	std::string string{};
 	string.resize(128);
