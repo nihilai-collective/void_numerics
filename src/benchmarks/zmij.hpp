@@ -682,7 +682,7 @@ namespace zmij {
 		uint128 div100 = splat32(div100_sig);
 		uint128 div10  = splat16((1 << 16) / 10 + 1);
 	#if ZMIJ_USE_SSE4_1
-		uint128 neg100 = splat32(zmij::neg100);
+		uint128 neg100 = splat32(::neg100);
 		uint128 neg10  = splat16((1 << 8) - 10);
 		uint128 bswap  = uint128{ pack8(15, 14, 13, 12, 11, 10, 9, 8), pack8(7, 6, 5, 4, 3, 2, 1, 0) };
 	#else
@@ -690,8 +690,8 @@ namespace zmij {
 		uint128 moddiv10 = splat16(10 * (1 << 8) - 1);
 	#endif// ZMIJ_USE_SSE4_1
 		uint128 div10k = splat64(div10k_sig);
-		uint128 neg10k = splat64(zmij::neg10k);
-		uint128 zeros  = splat64(zmij::zeros);
+		uint128 neg10k = splat64(::neg10k);
+		uint128 zeros  = splat64(::zeros);
 #endif// ZMIJ_USE_SSE
 
 		exp_shift_table exp_shifts;
@@ -1033,7 +1033,7 @@ namespace zmij {
 			bin_exp = 1;
 			bin_sig |= traits::implicit_bit;
 		}
-		auto dec		= to_decimal<double>(bin_sig ^ traits::implicit_bit, bin_exp, bin_sig != 0, static_data);
+		auto dec		= zmij::to_decimal<double>(bin_sig ^ traits::implicit_bit, bin_exp, bin_sig != 0, static_data);
 		auto last_digit = -dec.has_last_digit & dec.last_digit;
 		return { dec.sig * 10 + last_digit, dec.exp, negative };
 	}
@@ -1073,11 +1073,11 @@ namespace zmij {
 					dec_sig *= 10;
 					--dec_exp;
 				}
-				long long q	   = zmij::div10(dec_sig);
+				long long q	   = ::div10(dec_sig);
 				int last_digit = dec_sig - q * 10;
 				dec			   = { q, dec_exp, last_digit, last_digit != 0 };
 			} else {
-				dec = to_decimal<Float>(bin_sig | traits::implicit_bit, bin_exp, bin_sig != 0, *d);
+				dec = zmij::to_decimal<Float>(bin_sig | traits::implicit_bit, bin_exp, bin_sig != 0, *d);
 			}
 			bool has_last_digit = dec.has_last_digit;
 			bool extra_digit	= dec.sig >= threshold;

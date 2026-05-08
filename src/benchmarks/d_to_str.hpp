@@ -38,34 +38,35 @@ namespace d_to_str_tests {
 
 	struct vn_double_op {
 		VN_FORCE_INLINE static char* convert(double v, char* buf) noexcept {
+			return const_cast<char*>(vn::to_chars(buf, buf + 32, v).ptr);
+		}
+	};
+
+	struct zmij_double_op {
+		VN_FORCE_INLINE static char* convert(double v, char* buf) noexcept {
 			return const_cast<char*>(zmij::detail::write(v, buf));
 		}
 	};
-	
-	//struct zmij_double_op {
-	//	VN_FORCE_INLINE static char* convert(double v, char* buf) noexcept {
-	//		return const_cast<char*>(zmij::detail::write(v, buf));
-	//		}
-	//};
-	
+
 	struct std_double_op {
 		VN_FORCE_INLINE static char* convert(double v, char* buf) noexcept {
 			return std::to_chars(buf, buf + 32, v).ptr;
 		}
 	};
-	
+
 	struct fmt_double_op {
 		VN_FORCE_INLINE static char* convert(double v, char* buf) noexcept {
 			return fmt::format_to(buf, FMT_COMPILE("{}"), v);
 		}
 	};
-	
+
 	struct verify_double_correctness {
 		template<typename float_type> static void impl(const std::vector<float_type>& test_data, const char* test_label) {
 			uint64_t vn_correct{}, vn_incorrect{};
 			uint64_t std_correct{}, std_incorrect{};
 			uint64_t fmt_correct{}, fmt_incorrect{};
 			uint64_t zmij_correct{}, zmij_incorrect{};
+			uint64_t dragonbox_correct{}, dragonbox_incorrect{};
 			float_type first_bad_value{};
 			bool found_bad{ false };
 			auto round_trips = [](float_type original, char* buf, char* end) -> bool {
@@ -75,7 +76,7 @@ namespace d_to_str_tests {
 				if (ec != std::errc{})
 					return false;
 #else
-				char* endptr = buf;
+				char* endptr = end;
 				if constexpr (std::is_same_v<float_type, float>)
 					result = std::strtof(buf, &endptr);
 				else
@@ -87,29 +88,30 @@ namespace d_to_str_tests {
 			};
 			for (uint64_t x = 0; x < test_data.size(); ++x) {
 				float_type v = test_data[x];
-				char buf_vn[32]{};
-				char buf_std[32]{};
-				char buf_fmt[32]{};
-				char buf_zmij[32]{};
-				char* vn_end		= vn_double_op::convert(v, buf_vn);
-				char* std_end		= std_double_op::convert(v, buf_std);
-				char* fmt_end		= fmt_double_op::convert(v, buf_fmt);
-				//.char* zmij_end		= zmij_double_op::convert(v, buf_zmij);
+				char buf_vn[128]{};
+				char buf_std[128]{};
+				char buf_fmt[128]{};
+				char buf_zmij[128]{};
+				char buf_dragonbox[128]{};
+				char* vn_end   = vn_double_op::convert(v, buf_vn);
+				char* std_end  = std_double_op::convert(v, buf_std);
+				char* fmt_end  = fmt_double_op::convert(v, buf_fmt);
+				char* zmij_end = zmij_double_op::convert(v, buf_zmij);
 				if (round_trips(v, buf_vn, vn_end)) {
 					++vn_correct;
 				} else {
-				++vn_incorrect;
-									if (!found_bad) {
-				first_bad_value = v;
-					found_bad		= true;
-									}
+					++vn_incorrect;
+					if (!found_bad) {
+						first_bad_value = v;
+						found_bad		= true;
+					}
 				}
-				//.round_trips(v, buf_zmij, zmij_end) ? ++zmij_correct : ++zmij_incorrect;
+				round_trips(v, buf_zmij, zmij_end) ? ++zmij_correct : ++zmij_incorrect;
 				round_trips(v, buf_std, std_end) ? ++std_correct : ++std_incorrect;
 				round_trips(v, buf_fmt, fmt_end) ? ++fmt_correct : ++fmt_incorrect;
 			}
 			std::cout << "[" << test_label << "] vn correct: " << vn_correct << " | incorrect: " << vn_incorrect << " | std incorrect: " << std_incorrect
-					  << " | fmt incorrect: " << fmt_incorrect << " | zmij incorrect: " << zmij_incorrect << std::endl;
+					  << " | fmt incorrect: " << fmt_incorrect << " | dragonbox incorrect: " << dragonbox_incorrect << " | zmij incorrect: " << zmij_incorrect << std::endl;
 			if (vn_incorrect > 0) {
 				std::cout << "  FIRST BAD vn VALUE: " << first_bad_value << std::endl;
 			}
