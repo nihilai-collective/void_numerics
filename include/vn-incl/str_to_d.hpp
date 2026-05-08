@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <vn-incl/utility.hpp>
+#include <vn-incl/tables.hpp>
 #include <vn-incl/fast_float.h>
 
 namespace vn {

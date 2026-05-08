@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <vn-incl/utility.hpp>
+#include <vn-incl/tables.hpp>
 #include <iostream>
 
 namespace vn {
