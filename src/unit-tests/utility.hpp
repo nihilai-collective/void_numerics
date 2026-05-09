@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 Nihilai Collective Corp
+// unit-tests/utility.hpp
 
 #pragma once
 
@@ -10,7 +11,6 @@
 #include <vector>
 #include <memory>
 #include <map>
-
 
 namespace unit_tests {
 

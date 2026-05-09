@@ -56,7 +56,6 @@ target_compile_options(${PROJECT_NAME}
                 -O3
                 -march=native
                 -flto
-                -ffast-math
                 -finline-functions
                 -fomit-frame-pointer
                 -funroll-loops
@@ -76,7 +75,6 @@ target_compile_options(${PROJECT_NAME}
             >
             $<$<AND:$<CONFIG:Release>,$<BOOL:${VN_ASAN}>>:
                 -O1
-                -ffast-math
                 -fno-rtti
             >
             $<$<CONFIG:Debug>:
@@ -118,6 +116,7 @@ target_compile_definitions(${PROJECT_NAME}
         $<$<CONFIG:Release>:NDEBUG>
         VN_ARCH_ARM64=$<IF:$<OR:$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},aarch64>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},ARM64>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},arm64>>,1,0>
         VN_ARCH_X64=$<IF:$<OR:$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},AMD64>>,1,0>
+        VN_EXTENSION=$<IF:$<OR:$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>,$<CXX_COMPILER_ID:AppleClang>>,__extension__,>
         $<$<CONFIG:Debug>:DEBUG _DEBUG>
         $<$<BOOL:${VN_ASAN}>:VN_ASAN_ENABLED>
         $<$<BOOL:${VN_UBSAN}>:VN_UBSAN_ENABLED>

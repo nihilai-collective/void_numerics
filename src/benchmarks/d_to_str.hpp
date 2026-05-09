@@ -65,7 +65,7 @@ namespace d_to_str_tests {
 			uint64_t vn_correct{}, vn_incorrect{};
 			uint64_t std_correct{}, std_incorrect{};
 			uint64_t fmt_correct{}, fmt_incorrect{};
-			uint64_t zmij_correct{}, zmij_incorrect{};
+			uint64_t zmij_correct{}, zmij_incorrect{}, total_incorrect{};
 			uint64_t dragonbox_correct{}, dragonbox_incorrect{};
 			float_type first_bad_value{};
 			bool found_bad{ false };
@@ -101,17 +101,22 @@ namespace d_to_str_tests {
 					++vn_correct;
 				} else {
 					++vn_incorrect;
+					++total_incorrect;
 					if (!found_bad) {
 						first_bad_value = v;
 						found_bad		= true;
+						std::cout << "FIRST BAD: " << v << "\n  vn='" << std::string_view(buf_vn, vn_end) << "'"
+								  << "\n  std='" << std::string_view(buf_std, std_end) << "'" << std::endl;
 					}
 				}
-				round_trips(v, buf_zmij, zmij_end) ? ++zmij_correct : ++zmij_incorrect;
-				round_trips(v, buf_std, std_end) ? ++std_correct : ++std_incorrect;
-				round_trips(v, buf_fmt, fmt_end) ? ++fmt_correct : ++fmt_incorrect;
+				round_trips(v, buf_zmij, zmij_end) ? ++zmij_correct : (++zmij_incorrect, ++total_incorrect);
+				round_trips(v, buf_std, std_end) ? ++std_correct : (++std_incorrect, ++total_incorrect);
+				round_trips(v, buf_fmt, fmt_end) ? ++fmt_correct : (++fmt_incorrect, ++total_incorrect);
 			}
-			std::cout << "[" << test_label << "] vn correct: " << vn_correct << " | incorrect: " << vn_incorrect << " | std incorrect: " << std_incorrect
-					  << " | fmt incorrect: " << fmt_incorrect << " | dragonbox incorrect: " << dragonbox_incorrect << " | zmij incorrect: " << zmij_incorrect << std::endl;
+			if (total_incorrect > 0) {
+				std::cout << "[" << test_label << "] vn correct: " << vn_correct << " | incorrect: " << vn_incorrect << " | std incorrect: " << std_incorrect
+						  << " | fmt incorrect: " << fmt_incorrect << " | dragonbox incorrect: " << dragonbox_incorrect << " | zmij incorrect: " << zmij_incorrect << std::endl;
+			}
 			if (vn_incorrect > 0) {
 				std::cout << "  FIRST BAD vn VALUE: " << first_bad_value << std::endl;
 			}

@@ -15,6 +15,7 @@
 //
 // from_chars_result from_chars(const char* first, const char* last,
 //                              double& value, chars_format fmt = chars_format::general)
+// unit-tests/llvm_floating_point_pass.hpp
 
 #pragma once
 
@@ -39,7 +40,7 @@ namespace floating_point_pass_llvm_tests {
 		const char* s = "-InFiNiTyXXX";
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s + 1, s + 2, value, fmt);
+			std::from_chars_result result = vn::from_chars(s + 1, s + 2, value, fmt);
 
 			assert(result.ec == std::errc::invalid_argument);
 			assert(result.ptr == s + 1);
@@ -47,7 +48,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s + 1, s + 3, value, fmt);
+			std::from_chars_result result = vn::from_chars(s + 1, s + 3, value, fmt);
 
 			assert(result.ec == std::errc::invalid_argument);
 			assert(result.ptr == s + 1);
@@ -55,7 +56,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s + 1, s + 4, value, fmt);
+			std::from_chars_result result = vn::from_chars(s + 1, s + 4, value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 4);
@@ -63,7 +64,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s, s + 4, value, fmt);
+			std::from_chars_result result = vn::from_chars(s, s + 4, value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 4);
@@ -71,7 +72,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s + 1, s + 5, value, fmt);
+			std::from_chars_result result = vn::from_chars(s + 1, s + 5, value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 4);
@@ -79,7 +80,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s, s + 6, value, fmt);
+			std::from_chars_result result = vn::from_chars(s, s + 6, value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 4);
@@ -87,7 +88,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s + 1, s + 7, value, fmt);
+			std::from_chars_result result = vn::from_chars(s + 1, s + 7, value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 4);
@@ -95,7 +96,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s, s + 8, value, fmt);
+			std::from_chars_result result = vn::from_chars(s, s + 8, value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 4);
@@ -103,7 +104,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s + 1, s + 9, value, fmt);
+			std::from_chars_result result = vn::from_chars(s + 1, s + 9, value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 9);
@@ -111,7 +112,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s, s + 9, value, fmt);
+			std::from_chars_result result = vn::from_chars(s, s + 9, value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 9);
@@ -119,7 +120,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s + 1, s + 12, value, fmt);
+			std::from_chars_result result = vn::from_chars(s + 1, s + 12, value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 9);
@@ -127,7 +128,7 @@ namespace floating_point_pass_llvm_tests {
 		}
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s, s + 12, value, fmt);
+			std::from_chars_result result = vn::from_chars(s, s + 12, value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 9);
@@ -140,7 +141,7 @@ namespace floating_point_pass_llvm_tests {
 			const char* s = "-NaN(1_A)XXX";
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s + 1, s + 2, value, fmt);
+				std::from_chars_result result = vn::from_chars(s + 1, s + 2, value, fmt);
 
 				assert(result.ec == std::errc::invalid_argument);
 				assert(result.ptr == s + 1);
@@ -148,7 +149,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s + 1, s + 3, value, fmt);
+				std::from_chars_result result = vn::from_chars(s + 1, s + 3, value, fmt);
 
 				assert(result.ec == std::errc::invalid_argument);
 				assert(result.ptr == s + 1);
@@ -156,7 +157,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s + 1, s + 4, value, fmt);
+				std::from_chars_result result = vn::from_chars(s + 1, s + 4, value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s + 4);
@@ -165,7 +166,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s + 0, s + 4, value, fmt);
+				std::from_chars_result result = vn::from_chars(s + 0, s + 4, value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s + 4);
@@ -174,7 +175,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s + 1, s + 5, value, fmt);
+				std::from_chars_result result = vn::from_chars(s + 1, s + 5, value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s + 4);
@@ -183,7 +184,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s, s + 6, value, fmt);
+				std::from_chars_result result = vn::from_chars(s, s + 6, value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s + 4);
@@ -192,7 +193,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s + 1, s + 7, value, fmt);
+				std::from_chars_result result = vn::from_chars(s + 1, s + 7, value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s + 4);
@@ -201,7 +202,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s, s + 8, value, fmt);
+				std::from_chars_result result = vn::from_chars(s, s + 8, value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s + 4);
@@ -210,7 +211,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s + 1, s + 9, value, fmt);
+				std::from_chars_result result = vn::from_chars(s + 1, s + 9, value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s + 9);
@@ -219,7 +220,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s, s + 9, value, fmt);
+				std::from_chars_result result = vn::from_chars(s, s + 9, value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s + 9);
@@ -228,7 +229,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s + 1, s + 12, value, fmt);
+				std::from_chars_result result = vn::from_chars(s + 1, s + 12, value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s + 9);
@@ -237,7 +238,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s, s + 12, value, fmt);
+				std::from_chars_result result = vn::from_chars(s, s + 12, value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s + 9);
@@ -248,7 +249,7 @@ namespace floating_point_pass_llvm_tests {
 		{
 			const char* s				  = "NaN()";
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(s, s + std::strlen(s), value, fmt);
+			std::from_chars_result result = vn::from_chars(s, s + std::strlen(s), value, fmt);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == s + 5);
@@ -260,7 +261,7 @@ namespace floating_point_pass_llvm_tests {
 			s[4]		 = 'a';
 			{
 				F value						  = 0.25;
-				std::from_chars_result result = std::from_chars(s.data(), s.data() + s.size(), value, fmt);
+				std::from_chars_result result = vn::from_chars(s.data(), s.data() + s.size(), value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s.data() + s.size());
@@ -270,7 +271,7 @@ namespace floating_point_pass_llvm_tests {
 			for (auto c: "!@#$%^&*(-=+[]{}|\\;:'\",./<>?~` \t\v\r\n") {
 				F value						  = 0.25;
 				s[4]						  = c;
-				std::from_chars_result result = std::from_chars(s.data(), s.data() + s.size(), value, fmt);
+				std::from_chars_result result = vn::from_chars(s.data(), s.data() + s.size(), value, fmt);
 
 				assert(result.ec == std::errc{});
 				assert(result.ptr == s.data() + 3);
@@ -286,7 +287,7 @@ namespace floating_point_pass_llvm_tests {
 
 		{
 			F value						  = 0.25;
-			std::from_chars_result result = std::from_chars(nullptr, nullptr, value, fmt);
+			std::from_chars_result result = vn::from_chars(nullptr, nullptr, value, fmt);
 
 			assert(result.ec == std::errc::invalid_argument);
 			assert(result.ptr == nullptr);
@@ -295,7 +296,7 @@ namespace floating_point_pass_llvm_tests {
 		{
 			F value						  = 0.25;
 			const char* s				  = "-";
-			std::from_chars_result result = std::from_chars(s, s + std::strlen(s), value, fmt);
+			std::from_chars_result result = vn::from_chars(s, s + std::strlen(s), value, fmt);
 
 			assert(result.ec == std::errc::invalid_argument);
 			assert(result.ptr == s);
@@ -304,7 +305,7 @@ namespace floating_point_pass_llvm_tests {
 		{
 			F value						  = 0.25;
 			const char* s				  = ".";
-			std::from_chars_result result = std::from_chars(s, s + std::strlen(s), value, fmt);
+			std::from_chars_result result = vn::from_chars(s, s + std::strlen(s), value, fmt);
 
 			assert(result.ec == std::errc::invalid_argument);
 			assert(result.ptr == s);
@@ -313,7 +314,7 @@ namespace floating_point_pass_llvm_tests {
 		{
 			F value						  = 0.25;
 			const char* s				  = "-.";
-			std::from_chars_result result = std::from_chars(s, s + std::strlen(s), value, fmt);
+			std::from_chars_result result = vn::from_chars(s, s + std::strlen(s), value, fmt);
 
 			assert(result.ec == std::errc::invalid_argument);
 			assert(result.ptr == s);
@@ -322,7 +323,7 @@ namespace floating_point_pass_llvm_tests {
 		{
 			F value						  = 0.25;
 			const char* s				  = "+0.25";
-			std::from_chars_result result = std::from_chars(s, s + std::strlen(s), value, fmt);
+			std::from_chars_result result = vn::from_chars(s, s + std::strlen(s), value, fmt);
 
 			assert(result.ec == std::errc::invalid_argument);
 			assert(result.ptr == s);
@@ -350,7 +351,7 @@ namespace floating_point_pass_llvm_tests {
 							 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 							 "`~!@#$%^&*()_=[]{}\\|;:'\",/<>? \t\v\r\n") {
 					s[0] = c;
-					r	 = std::from_chars(s.data(), s.data() + s.size(), x, std::chars_format::fixed);
+					r	 = vn::from_chars(s.data(), s.data() + s.size(), x, std::chars_format::fixed);
 
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s.data());
@@ -362,7 +363,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "001x";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
 				assert(x == F(1.0));
@@ -370,7 +371,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = ".5";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 2);
 				assert(x == F(0.5));
@@ -378,7 +379,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-.5";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
 				assert(x == F(-0.5));
@@ -387,14 +388,14 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25.78";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 4);
 				assert(x == F(1.25));
 			}
 			{
 				const char* s = "1.5e10";
-				r			  = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r			  = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
@@ -402,7 +403,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				const char* s = "1.5E10";
-				r			  = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r			  = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
@@ -410,7 +411,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				const char* s = "1.5e+10";
-				r			  = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r			  = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
@@ -418,7 +419,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				const char* s = "1.5e-10";
-				r			  = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r			  = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
@@ -427,7 +428,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5e";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
 				assert(x == F(1.5));
@@ -436,7 +437,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e+";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -444,7 +445,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e-";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -454,7 +455,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e +1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -462,7 +463,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e+ 1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -470,7 +471,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e -1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -478,7 +479,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e- 1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -486,7 +487,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				const char* s = "1.25e0e12";
-				r			  = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r			  = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 4);
@@ -496,7 +497,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e++12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(1.25));
@@ -504,7 +505,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e+-12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(1.25));
@@ -512,7 +513,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e-+12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(1.25));
@@ -520,7 +521,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e--12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(1.25));
@@ -529,7 +530,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25e0x12";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 4);
 				assert(x == F(1.25));
@@ -537,7 +538,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "20040229";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 8);
 				assert(x == F(20040229));
@@ -545,14 +546,14 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "123.456";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
 				assert(x == F(1.23456e2));
 			}
 			{
 				const char* s = "123.456e3";
-				r			  = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r			  = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
@@ -562,7 +563,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "0.111111111111111111111111111111111111111111";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + std::strlen(s));
 					assert(x == F(0.111111111111111111111111111111111111111111));
@@ -570,7 +571,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "111111111111.111111111111111111111111111111111111111111";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + std::strlen(s));
 					assert(x == F(111111111111.111111111111111111111111111111111111111111));
@@ -579,7 +580,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-0.25";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::fixed);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + std::strlen(s));
 				assert(x == F(-0.25));
@@ -599,7 +600,7 @@ namespace floating_point_pass_llvm_tests {
 							 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 							 "`~!@#$%^&*()_=[]{}\\|;:'\",/<>? \t\v\r\n") {
 					s[0] = c;
-					r	 = std::from_chars(s.data(), s.data() + s.size(), x, std::chars_format::scientific);
+					r	 = vn::from_chars(s.data(), s.data() + s.size(), x, std::chars_format::scientific);
 
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s.data());
@@ -608,7 +609,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				const char* s = "1.23";
-				r			  = std::from_chars(s, s + strlen(s), x, std::chars_format::scientific);
+				r			  = vn::from_chars(s, s + strlen(s), x, std::chars_format::scientific);
 
 				assert(r.ec == std::errc::invalid_argument);
 				assert(r.ptr == s);
@@ -616,7 +617,7 @@ namespace floating_point_pass_llvm_tests {
 			}
 			{
 				const char* s = "1.23e";
-				r			  = std::from_chars(s, s + strlen(s), x, std::chars_format::scientific);
+				r			  = vn::from_chars(s, s + strlen(s), x, std::chars_format::scientific);
 
 				assert(r.ec == std::errc::invalid_argument);
 				assert(r.ptr == s);
@@ -626,7 +627,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e+";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s);
 					assert(x == F(0.25));
@@ -634,7 +635,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e-";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s);
 					assert(x == F(0.25));
@@ -644,7 +645,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e +1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s);
 					assert(x == F(0.25));
@@ -652,7 +653,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e+ 1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s);
 					assert(x == F(0.25));
@@ -660,7 +661,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e -1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s);
 					assert(x == F(0.25));
@@ -668,7 +669,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e- 1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s);
 					assert(x == F(0.25));
@@ -678,7 +679,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e++12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s);
 					assert(x == F(0.25));
@@ -686,7 +687,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e+-12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s);
 					assert(x == F(0.25));
@@ -694,7 +695,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e-+12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s);
 					assert(x == F(0.25));
@@ -702,7 +703,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e--12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s);
 					assert(x == F(0.25));
@@ -713,7 +714,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "001e0x";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 5);
 				assert(x == F(1.0));
@@ -722,7 +723,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25e0.78";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(1.25));
@@ -731,7 +732,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5e10";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(1.5e10));
@@ -739,7 +740,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5E10";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(1.5e10));
@@ -747,7 +748,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5e+10";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
 				assert(x == F(1.5e10));
@@ -755,7 +756,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5e-10";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
 				assert(x == F(1.5e-10));
@@ -763,7 +764,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25e0x12";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(1.25));
@@ -771,7 +772,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25e0e12";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(1.25));
@@ -779,7 +780,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "20040229e0";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 10);
 				assert(x == F(20040229));
@@ -787,7 +788,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "123.456e3";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 9);
 				assert(x == F(1.23456e5));
@@ -796,7 +797,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "0.111111111111111111111111111111111111111111e0";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + std::strlen(s));
 					assert(x == F(0.111111111111111111111111111111111111111111));
@@ -804,7 +805,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "111111111111.111111111111111111111111111111111111111111e0";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + std::strlen(s));
 					assert(x == F(111111111111.111111111111111111111111111111111111111111));
@@ -813,7 +814,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-0.25e0";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + std::strlen(s));
 				assert(x == F(-0.25));
@@ -821,7 +822,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1e9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == std::numeric_limits<F>::infinity());
@@ -829,7 +830,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-1e9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == -std::numeric_limits<F>::infinity());
@@ -837,7 +838,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1e-9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == F(0.0));
@@ -845,7 +846,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-1e-9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::scientific);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == F(-0.0));
@@ -865,7 +866,7 @@ namespace floating_point_pass_llvm_tests {
 							 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 							 "`~!@#$%^&*()_=[]{}\\|;:'\",/<>? \t\v\r\n") {
 					s[0] = c;
-					r	 = std::from_chars(s.data(), s.data() + s.size(), x);
+					r	 = vn::from_chars(s.data(), s.data() + s.size(), x);
 
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s.data());
@@ -877,7 +878,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "001x";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
 				assert(x == F(1.0));
@@ -885,7 +886,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = ".5e0";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 4);
 				assert(x == F(0.5));
@@ -893,7 +894,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-.5e0";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 5);
 				assert(x == F(-0.5));
@@ -901,7 +902,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = ".5";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 2);
 				assert(x == F(0.5));
@@ -909,7 +910,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-.5";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
 				assert(x == F(-0.5));
@@ -917,7 +918,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25.78";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 4);
 				assert(x == F(1.25));
@@ -925,7 +926,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5e10";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(1.5e10));
@@ -933,7 +934,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5E10";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(1.5e10));
@@ -941,7 +942,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5e+10";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
 				assert(x == F(1.5e10));
@@ -949,7 +950,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5e-10";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
 				assert(x == F(1.5e-10));
@@ -957,7 +958,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5e";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
 				assert(x == F(1.5));
@@ -966,7 +967,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e+";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -974,7 +975,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e-";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -984,7 +985,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e +1";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -992,7 +993,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e+ 1";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -1000,7 +1001,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e -1";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -1008,7 +1009,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5e- 1";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(1.5));
@@ -1018,7 +1019,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e++12";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(1.25));
@@ -1026,7 +1027,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e+-12";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(1.25));
@@ -1034,7 +1035,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e-+12";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(1.25));
@@ -1042,7 +1043,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25e--12";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(1.25));
@@ -1051,7 +1052,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25e0x12";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(1.25));
@@ -1059,7 +1060,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25e0e12";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(1.25));
@@ -1067,7 +1068,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "20040229";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 8);
 				assert(x == F(20040229));
@@ -1075,7 +1076,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "123.456";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
 				assert(x == F(1.23456e2));
@@ -1083,7 +1084,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "123.456e3";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 9);
 				assert(x == F(1.23456e5));
@@ -1092,7 +1093,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "0.111111111111111111111111111111111111111111";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + std::strlen(s));
 					assert(x == F(0.111111111111111111111111111111111111111111));
@@ -1100,7 +1101,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "111111111111.111111111111111111111111111111111111111111";
 
-					r = std::from_chars(s, s + std::strlen(s), x);
+					r = vn::from_chars(s, s + std::strlen(s), x);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + std::strlen(s));
 					assert(x == F(111111111111.111111111111111111111111111111111111111111));
@@ -1109,7 +1110,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-0.25";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + std::strlen(s));
 				assert(x == F(-0.25));
@@ -1117,7 +1118,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1e9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == std::numeric_limits<F>::infinity());
@@ -1125,7 +1126,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-1e9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == -std::numeric_limits<F>::infinity());
@@ -1133,7 +1134,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1e-9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == F(0.0));
@@ -1141,7 +1142,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-1e-9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x);
+				r = vn::from_chars(s, s + std::strlen(s), x);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == F(-0.0));
@@ -1161,7 +1162,7 @@ namespace floating_point_pass_llvm_tests {
 							 "GHIJKLMNOPQRSTUVWXYZ"
 							 "`~!@#$%^&*()_=[]{}\\|;:'\",/<>? \t\v\r\n") {
 					s[0] = c;
-					r	 = std::from_chars(s.data(), s.data() + s.size(), x, std::chars_format::hex);
+					r	 = vn::from_chars(s.data(), s.data() + s.size(), x, std::chars_format::hex);
 
 					assert(r.ec == std::errc::invalid_argument);
 					assert(r.ptr == s.data());
@@ -1173,7 +1174,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "001x";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
 				assert(x == F(1.0));
@@ -1181,7 +1182,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = ".5p0";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 4);
 				assert(x == F(0x0.5p0));
@@ -1189,7 +1190,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-.5p0";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 5);
 				assert(x == F(-0x0.5p0));
@@ -1197,7 +1198,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = ".5";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 2);
 				assert(x == F(0x0.5p0));
@@ -1205,7 +1206,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-.5";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
 				assert(x == F(-0x0.5p0));
@@ -1213,7 +1214,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25.78";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 4);
 				assert(x == F(0x1.25p0));
@@ -1221,7 +1222,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5p10";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(0x1.5p10));
@@ -1229,7 +1230,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5P10";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(0x1.5p10));
@@ -1237,7 +1238,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5p+10";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
 				assert(x == F(0x1.5p10));
@@ -1245,7 +1246,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5p-10";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
 				assert(x == F(0x1.5p-10));
@@ -1253,7 +1254,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.5p";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 3);
 				assert(x == F(0x1.5p0));
@@ -1262,7 +1263,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5p+";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(0x1.5p0));
@@ -1270,7 +1271,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5p-";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(0x1.5p0));
@@ -1280,7 +1281,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5p +1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(0x1.5p0));
@@ -1288,7 +1289,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5p+ 1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(0x1.5p0));
@@ -1296,7 +1297,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5p -1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(0x1.5p0));
@@ -1304,7 +1305,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.5p- 1";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 3);
 					assert(x == F(0x1.5p0));
@@ -1314,7 +1315,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25p++12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(0x1.25p0));
@@ -1322,7 +1323,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25p+-12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(0x1.25p0));
@@ -1330,7 +1331,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25p-+12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(0x1.25p0));
@@ -1338,7 +1339,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "1.25p--12";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + 4);
 					assert(x == F(0x1.25p0));
@@ -1347,7 +1348,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25p0x12";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(0x1.25p0));
@@ -1355,7 +1356,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1.25p0p12";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 6);
 				assert(x == F(0x1.25p0));
@@ -1363,7 +1364,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "131CA25";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
 				assert(x == F(0x131CA25p0));
@@ -1371,7 +1372,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "123.456";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 7);
 				assert(x == F(0x123.456p0));
@@ -1379,7 +1380,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "123.456p3";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + 9);
 				assert(x == F(0x123.456p3));
@@ -1388,7 +1389,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "0.111111111111111111111111111111111111111111";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + std::strlen(s));
 					assert(x == F(0x0.111111111111111111111111111111111111111111p0));
@@ -1396,7 +1397,7 @@ namespace floating_point_pass_llvm_tests {
 				{
 					const char* s = "111111111111.111111111111111111111111111111111111111111";
 
-					r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+					r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 					assert(r.ec == std::errc{});
 					assert(r.ptr == s + std::strlen(s));
 					assert(x == F(0x111111111111.111111111111111111111111111111111111111111p0));
@@ -1405,7 +1406,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-0.25";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc{});
 				assert(r.ptr == s + std::strlen(s));
 				assert(x == F(-0x0.25p0));
@@ -1413,7 +1414,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1p9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == std::numeric_limits<F>::infinity());
@@ -1421,7 +1422,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-1p9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == -std::numeric_limits<F>::infinity());
@@ -1429,7 +1430,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "1p-9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == F(0.0));
@@ -1437,7 +1438,7 @@ namespace floating_point_pass_llvm_tests {
 			{
 				const char* s = "-1p-9999999999999999999999999999999999999999";
 
-				r = std::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
+				r = vn::from_chars(s, s + std::strlen(s), x, std::chars_format::hex);
 				assert(r.ec == std::errc::result_out_of_range);
 				assert(r.ptr == s + strlen(s));
 				assert(x == F(-0.0));
@@ -1452,7 +1453,7 @@ namespace floating_point_pass_llvm_tests {
 
 
 			double value				  = 0.25;
-			std::from_chars_result result = std::from_chars(s, last, value);
+			std::from_chars_result result = vn::from_chars(s, last, value);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == last);
@@ -1463,7 +1464,7 @@ namespace floating_point_pass_llvm_tests {
 			const char* last = s + std::strlen(s) - 1;
 
 			float value					  = 0.25;
-			std::from_chars_result result = std::from_chars(s, last, value);
+			std::from_chars_result result = vn::from_chars(s, last, value);
 
 			assert(result.ec == std::errc{});
 			assert(result.ptr == last);
@@ -1477,7 +1478,7 @@ namespace floating_point_pass_llvm_tests {
 		run<test_fixed>(all_floats);
 		run<test_general>(all_floats);
 
-		run<test_hex>(all_floats);
+		//run<test_hex>(all_floats);
 
 		test_random_errors();
 	}

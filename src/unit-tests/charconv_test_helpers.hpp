@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 //===----------------------------------------------------------------------===//
+// unit-tests/charconv_test_helpers.hpp
 
 #ifndef SUPPORT_CHARCONV_TEST_HELPERS_H
 #define SUPPORT_CHARCONV_TEST_HELPERS_H
@@ -181,7 +182,7 @@ template<typename L1, typename L2> constexpr auto concat(L1, L2) -> concat_t<L1,
 
 static constexpr auto all_floats = type_list<float, double>();
 static constexpr auto all_signed   = type_list<char, signed char, short, int32_t, long, long long>();
-static constexpr auto all_unsigned = type_list<uint8_t, uint32_t short, uint32_t, uint64_t, uint64_t>();
+static constexpr auto all_unsigned = type_list<uint8_t, unsigned short, uint32_t, uint64_t, uint64_t>();
 static constexpr auto integrals	   = concat(all_unsigned, all_signed);
 
 template<template<typename> class Fn, typename... Ts> TEST_CONSTEXPR_CXX23 void run(type_list<Ts...>) {
