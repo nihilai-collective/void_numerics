@@ -82,8 +82,9 @@ namespace benchmarks {
 		using test_type = test_type_new;
 	};
 
-	template<typename benchmark_stage_type, bnch_swt::string_literal test_name_new, typename test_type, typename test_data_type, typename output_buffer_type> auto execute_test(uint64_t test_size, uint64_t sub_iters,
-		test_data_type& test_data, output_buffer_type& output_buffer, bnch_swt::internal::cache_clearer<bnch_swt::benchmark_types::cpu>& cclearer) {
+	template<typename benchmark_stage_type, bnch_swt::string_literal test_name_new, typename test_type, typename test_data_type, typename output_buffer_type>
+	auto execute_test(uint64_t test_size, uint64_t sub_iters, test_data_type& test_data, output_buffer_type& output_buffer,
+		bnch_swt::internal::cache_clearer<bnch_swt::benchmark_types::cpu>& cclearer) {
 		static constexpr bnch_swt::string_literal test_name{ test_name_new };
 		uint64_t current_index{};
 		cclearer.evict_caches();
@@ -100,7 +101,7 @@ namespace benchmarks {
 	template<typename benchmark_stage_type, bnch_swt::string_literal test_name_new, uint64_t test_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters,
 		typename correctness_verifier, typename test_data_type, typename output_buffer_type, typename... test_types>
 	auto run_one_test(test_data_type& test_data, output_buffer_type& output_buffer) {
-		static constexpr bnch_swt::string_literal test_name{ test_name_new };
+		static constexpr bnch_swt::string_literal test_name{ test_name_new + "-mixed-lengths" + "-test-size[" + bnch_swt::internal::to_string_literal<test_size>() + "]" };
 		bnch_swt::internal::cache_clearer<bnch_swt::benchmark_types::cpu> cclearer{};
 		execute_tests<benchmark_stage_type, test_name, test_data_type, output_buffer_type, test_types...>(test_size, sub_iters, test_data, output_buffer);
 		correctness_verifier::impl(test_data, test_name.data());
@@ -115,18 +116,29 @@ namespace benchmarks {
 		}
 	};
 
-	template<typename benchmark_stage_type, bnch_swt::string_literal test_name, uint64_t test_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters,
+	template<typename benchmark_stage_type, bnch_swt::string_literal test_name, uint64_t test_max_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters,
 		vn::detail::integer_types v_type, typename correctness_verifier, template<uint64_t, uint64_t, uint64_t, typename, uint64_t, uint64_t, bool> typename digit_generator_type,
 		bool negative, typename... test_types>
 	static void mixed_digit_count() {
-		static constexpr bnch_swt::string_literal name{ test_name + "-mixed-lengths" + "-test-size[" + bnch_swt::internal::to_string_literal<test_size>() + "]" };
-		auto test_data			 = digit_generator_type<test_size, sub_iters, total_iters, v_type, 1, max_digits_v<v_type>, negative>::impl();
-		using output_buffer_type = typename digit_generator_type<test_size, sub_iters, total_iters, v_type, 1, max_digits_v<v_type>, negative>::output_data_type;
-		static constexpr uint64_t type_size{ digit_generator_type<test_size, sub_iters, total_iters, v_type, 1, max_digits_v<v_type>, negative>::type_size };
-		output_buffer_type output_buffer(total_iters * test_size * sub_iters * type_size, 0);
+		auto test_data			 = digit_generator_type<test_max_size, sub_iters, total_iters, v_type, 1, max_digits_v<v_type>, negative>::impl();
+		using output_buffer_type = typename digit_generator_type<test_max_size, sub_iters, total_iters, v_type, 1, max_digits_v<v_type>, negative>::output_data_type;
+		static constexpr uint64_t type_size{ digit_generator_type<test_max_size, sub_iters, total_iters, v_type, 1, max_digits_v<v_type>, negative>::type_size };
 		using test_data_type = decltype(test_data);
-		run_one_test<benchmark_stage_type, name, test_size, total_iters, sub_iters, measured_iters, correctness_verifier, test_data_type, output_buffer_type, test_types...>(
-			test_data, output_buffer);
+		{
+			output_buffer_type output_buffer(total_iters * 100 * sub_iters * type_size, 0);
+			run_one_test<benchmark_stage_type, test_name, 100, total_iters, sub_iters, measured_iters, correctness_verifier, test_data_type, output_buffer_type, test_types...>(
+				test_data, output_buffer);
+		}
+		{
+			output_buffer_type output_buffer(total_iters * 1000 * sub_iters * type_size, 0);
+			run_one_test<benchmark_stage_type, test_name, 1000, total_iters, sub_iters, measured_iters, correctness_verifier, test_data_type, output_buffer_type, test_types...>(
+				test_data, output_buffer);
+		}
+		{
+			output_buffer_type output_buffer(total_iters * 10000 * sub_iters * type_size, 0);
+			run_one_test<benchmark_stage_type, test_name, 10000, total_iters, sub_iters, measured_iters, correctness_verifier, test_data_type, output_buffer_type, test_types...>(
+				test_data, output_buffer);
+		}
 	}
 
 	template<typename benchmark_stage_type, bnch_swt::string_literal test_name, uint64_t test_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters,
@@ -146,22 +158,21 @@ namespace benchmarks {
 	template<typename benchmark_stage_type, bnch_swt::string_literal stage_name, uint64_t test_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters,
 		typename correctness_verifier, template<uint64_t, uint64_t, uint64_t, typename, uint64_t, uint64_t, bool> typename digit_generator_type, typename... test_types>
 	auto test_function_impl() {
-		digit_iterator<benchmark_stage_type, "int8", test_size, total_iters, sub_iters, measured_iters, int8_t, correctness_verifier,
-				  digit_generator_type, test_types...>::impl();
-		digit_iterator<benchmark_stage_type, "uint8", test_size, total_iters, sub_iters, measured_iters, uint8_t, correctness_verifier,
-			digit_generator_type, test_types...>::impl();
-		digit_iterator<benchmark_stage_type, "int16", test_size, total_iters, sub_iters, measured_iters, int16_t, correctness_verifier,
-			digit_generator_type, test_types...>::impl();
-		digit_iterator<benchmark_stage_type, "uint16", test_size, total_iters, sub_iters, measured_iters, uint16_t, correctness_verifier,
-			digit_generator_type, test_types...>::impl();
-		digit_iterator<benchmark_stage_type, "int32", test_size, total_iters, sub_iters, measured_iters, int32_t, correctness_verifier,
-			digit_generator_type, test_types...>::impl();
-		digit_iterator<benchmark_stage_type, "uint32", test_size, total_iters, sub_iters, measured_iters, uint32_t, correctness_verifier,
-			digit_generator_type, test_types...>::impl();
-		digit_iterator<benchmark_stage_type, "int64", test_size, total_iters, sub_iters, measured_iters, int64_t, correctness_verifier,
-			digit_generator_type, test_types...>::impl();
-		digit_iterator<benchmark_stage_type, "uint64_t", test_size, total_iters, sub_iters, measured_iters, uint64_t, correctness_verifier,
-			digit_generator_type, test_types...>::impl();
+		digit_iterator<benchmark_stage_type, "int8", test_size, total_iters, sub_iters, measured_iters, int8_t, correctness_verifier, digit_generator_type, test_types...>::impl();
+		digit_iterator<benchmark_stage_type, "uint8", test_size, total_iters, sub_iters, measured_iters, uint8_t, correctness_verifier, digit_generator_type,
+			test_types...>::impl();
+		digit_iterator<benchmark_stage_type, "int16", test_size, total_iters, sub_iters, measured_iters, int16_t, correctness_verifier, digit_generator_type,
+			test_types...>::impl();
+		digit_iterator<benchmark_stage_type, "uint16", test_size, total_iters, sub_iters, measured_iters, uint16_t, correctness_verifier, digit_generator_type,
+			test_types...>::impl();
+		digit_iterator<benchmark_stage_type, "int32", test_size, total_iters, sub_iters, measured_iters, int32_t, correctness_verifier, digit_generator_type,
+			test_types...>::impl();
+		digit_iterator<benchmark_stage_type, "uint32", test_size, total_iters, sub_iters, measured_iters, uint32_t, correctness_verifier, digit_generator_type,
+			test_types...>::impl();
+		digit_iterator<benchmark_stage_type, "int64", test_size, total_iters, sub_iters, measured_iters, int64_t, correctness_verifier, digit_generator_type,
+			test_types...>::impl();
+		digit_iterator<benchmark_stage_type, "uint64_t", test_size, total_iters, sub_iters, measured_iters, uint64_t, correctness_verifier, digit_generator_type,
+			test_types...>::impl();
 	}
 
 	template<bnch_swt::string_literal stage_name, vn::detail::conversion_classes conversion_class, uint64_t total_iters, uint64_t measured_iters, typename correctness_verifier,
@@ -169,11 +180,7 @@ namespace benchmarks {
 	struct tests {
 		static void impl() {
 			using bench_stage_type = bnch_swt::benchmark_stage<stage_name, total_iters, measured_iters, bnch_swt::benchmark_types::cpu>;
-			test_function_impl<bench_stage_type, stage_name, 100, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
-			test_function_impl<bench_stage_type, stage_name, 1000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
 			test_function_impl<bench_stage_type, stage_name, 10000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
-			test_function_impl<bench_stage_type, stage_name, 100000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
-			test_function_impl<bench_stage_type, stage_name, 1000000, total_iters, 10, measured_iters, correctness_verifier, digit_generator_type, test_types...>();
 			bench_stage_type::print_results();
 		}
 	};
@@ -221,8 +228,7 @@ namespace benchmarks {
 	};
 
 	template<typename benchmark_stage_type, bnch_swt::string_literal test_name_new, uint64_t test_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters,
-		typename float_type,
-		typename correctness_verifier, template<uint64_t, uint64_t, uint64_t, typename, int64_t, int64_t, bool> typename double_generator_type, bool negative,
+		typename float_type, typename correctness_verifier, template<uint64_t, uint64_t, uint64_t, typename, int64_t, int64_t, bool> typename double_generator_type, bool negative,
 		typename... test_types>
 		requires(std::is_floating_point_v<float_type>)
 	static void mixed_exponent_range() {
@@ -245,11 +251,9 @@ namespace benchmarks {
 	struct double_iterator {
 		static auto impl() {
 			mixed_exponent_range<benchmark_stage_type, test_name + "-negative", test_size, total_iters, sub_iters, measured_iters, float_type, correctness_verifier,
-				double_generator_type, true,
-				test_types...>();
+				double_generator_type, true, test_types...>();
 			mixed_exponent_range<benchmark_stage_type, test_name + "-positive", test_size, total_iters, sub_iters, measured_iters, float_type, correctness_verifier,
-				double_generator_type, false,
-				test_types...>();
+				double_generator_type, false, test_types...>();
 		}
 	};
 
@@ -266,7 +270,7 @@ namespace benchmarks {
 		template<uint64_t, uint64_t, uint64_t, typename, int64_t, int64_t, bool> typename double_generator_type, typename... test_types>
 	struct double_tests {
 		static void impl() {
-			using bench_stage_type			   = bnch_swt::benchmark_stage<stage_name, total_iters, measured_iters, bnch_swt::benchmark_types::cpu>;
+			using bench_stage_type = bnch_swt::benchmark_stage<stage_name, total_iters, measured_iters, bnch_swt::benchmark_types::cpu>;
 			double_test_function_impl<bench_stage_type, 100, total_iters, 10, measured_iters, correctness_verifier, double_generator_type, test_types...>();
 			double_test_function_impl<bench_stage_type, 1000, total_iters, 10, measured_iters, correctness_verifier, double_generator_type, test_types...>();
 			double_test_function_impl<bench_stage_type, 10000, total_iters, 10, measured_iters, correctness_verifier, double_generator_type, test_types...>();

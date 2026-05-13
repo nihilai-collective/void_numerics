@@ -1,6 +1,6 @@
 # void_numerics
 
-**SWAR-optimized integer conversion for C++20.**
+**SWAR-optimized integer conversion for C++23.**
 
 `vn::to_chars` and `vn::from_chars` — drop-in replacements for the standard library equivalents, engineered for performance. Header-only, zero-allocation, no exceptions, no RTTI.
 
@@ -20,7 +20,7 @@ Every conversion is exhaustively unit-tested against `std::to_chars` / `std::fro
 - **All integer types**: `int8_t`, `uint8_t`, `int16_t`, `uint16_t`, `int32_t`, `uint32_t`, `int64_t`, `uint64_t`
 - **Header-only** — single include, no build step required to consume
 - **Zero allocation, zero exceptions, zero RTTI**
-- **C++20** — leverages concepts for type-correct dispatch
+- **C++23** — leverages concepts for type-correct dispatch
 - **Compile-time tables** for digit conversion and overflow bounds
 - **Multiply-and-shift division replacement** for hot paths
 - **Force-inlined helpers** with manual ladder dispatch sized to digit count
@@ -117,7 +117,7 @@ target_link_libraries(your_target PRIVATE void-numerics::void-numerics)
 
 ### Requirements
 
-- C++20-capable compiler (Clang ≥ 20, GCC ≥ 14, MSVC latest, AppleClang)
+- C++23-capable compiler (Clang ≥ 20, GCC ≥ 14, MSVC latest, AppleClang)
 - CMake ≥ 3.28
 
 ---

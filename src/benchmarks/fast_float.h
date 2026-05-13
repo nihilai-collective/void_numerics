@@ -214,7 +214,7 @@ template <typename UC> struct from_chars_result_t {
 using from_chars_result = from_chars_result_t<char>;
 
 template <typename UC> struct parse_options_t {
-  constexpr explicit parse_options_t(chars_format fmt = chars_format::general,
+  constexpr explicit parse_options_t(chars_format fmt = std::chars_format::general,
                                      UC dot = UC('.'), int32_t b = 10)
       : format(fmt), decimal_point(dot), base(b) {}
 
@@ -1563,10 +1563,10 @@ namespace detail {
 constexpr chars_format adjust_for_feature_macros(chars_format fmt) {
   return fmt
 #ifdef FASTFLOAT_ALLOWS_LEADING_PLUS
-         | chars_format::allow_leading_plus
+         | std::chars_format::allow_leading_plus
 #endif
 #ifdef FASTFLOAT_SKIP_WHITE_SPACE
-         | chars_format::skip_white_space
+         | std::chars_format::skip_white_space
 #endif
       ;
 }
@@ -1600,17 +1600,17 @@ namespace fast_float {
  *
  * Like the C++17 standard, the `fast_float::from_chars` functions take an
  * optional last argument of the type `fast_float::chars_format`. It is a bitset
- * value: we check whether `fmt & fast_float::chars_format::fixed` and `fmt &
- * fast_float::chars_format::scientific` are set to determine whether we allow
+ * value: we check whether `fmt & fast_float::std::chars_format::fixed` and `fmt &
+ * fast_float::std::chars_format::scientific` are set to determine whether we allow
  * the fixed point and scientific notation respectively. The default is
- * `fast_float::chars_format::general` which allows both `fixed` and
+ * `fast_float::std::chars_format::general` which allows both `fixed` and
  * `scientific`.
  */
 template <typename T, typename UC = char,
           typename = FASTFLOAT_ENABLE_IF(is_supported_float_type<T>::value)>
 FASTFLOAT_CONSTEXPR20 from_chars_result_t<UC>
 from_chars(UC const *first, UC const *last, T &value,
-           chars_format fmt = chars_format::general) noexcept;
+           chars_format fmt = std::chars_format::general) noexcept;
 
 /**
  * Like from_chars, but accepts an `options` argument to govern number parsing.
@@ -1994,7 +1994,7 @@ parse_number_string(UC const *p, UC const *pend,
   // assume p < pend, so dereference without checks;
   answer.negative = (*p == UC('-'));
   // C++17 20.19.3.(7.1) explicitly forbids '+' sign here
-  if ((*p == UC('-')) || (uint64_t(fmt & chars_format::allow_leading_plus) &&
+  if ((*p == UC('-')) || (uint64_t(fmt & std::chars_format::allow_leading_plus) &&
                           !basic_json_fmt && *p == UC('+'))) {
     ++p;
     if (p == pend) {
@@ -2071,7 +2071,7 @@ parse_number_string(UC const *p, UC const *pend,
     return report_parse_error<UC>(p, parse_error::no_digits_in_mantissa);
   }
   int64_t exp_number = 0; // explicit exponential part
-  if ((uint64_t(fmt & chars_format::scientific) && (p != pend) &&
+  if ((uint64_t(fmt & std::chars_format::scientific) && (p != pend) &&
        ((UC('e') == *p) || (UC('E') == *p))) ||
       (uint64_t(fmt & detail::basic_fortran_fmt) && (p != pend) &&
        ((UC('+') == *p) || (UC('-') == *p) || (UC('d') == *p) ||
@@ -2091,7 +2091,7 @@ parse_number_string(UC const *p, UC const *pend,
       ++p;
     }
     if ((p == pend) || !is_integer(*p)) {
-      if (!uint64_t(fmt & chars_format::fixed)) {
+      if (!uint64_t(fmt & std::chars_format::fixed)) {
         // The exponential part is invalid for scientific notation, so it must
         // be a trailing token for fixed notation. However, fixed notation is
         // disabled, so report a scientific notation error.
@@ -2114,8 +2114,8 @@ parse_number_string(UC const *p, UC const *pend,
     }
   } else {
     // If it scientific and not fixed, we have to bail out.
-    if (uint64_t(fmt & chars_format::scientific) &&
-        !uint64_t(fmt & chars_format::fixed)) {
+    if (uint64_t(fmt & std::chars_format::scientific) &&
+        !uint64_t(fmt & std::chars_format::fixed)) {
       return report_parse_error<UC>(p, parse_error::missing_exponential_part);
     }
   }
@@ -2197,7 +2197,7 @@ parse_int_string(UC const *p, UC const *pend, T &value,
     return answer;
   }
   if ((*p == UC('-')) ||
-      (uint64_t(fmt & chars_format::allow_leading_plus) && (*p == UC('+')))) {
+      (uint64_t(fmt & std::chars_format::allow_leading_plus) && (*p == UC('+')))) {
     ++p;
   }
 
@@ -4469,7 +4469,7 @@ from_chars_result_t<UC>
   bool const minusSign = (*first == UC('-'));
   // C++17 20.19.3.(7.1) explicitly forbids '+' sign here
   if ((*first == UC('-')) ||
-      (uint64_t(fmt & chars_format::allow_leading_plus) &&
+      (uint64_t(fmt & std::chars_format::allow_leading_plus) &&
        (*first == UC('+')))) {
     ++first;
   }
@@ -4622,7 +4622,7 @@ template <> struct from_chars_caller<std::float64_t> {
 template <typename T, typename UC, typename>
 FASTFLOAT_CONSTEXPR20 from_chars_result_t<UC>
 from_chars(UC const *first, UC const *last, T &value,
-           chars_format fmt /*= chars_format::general*/) noexcept {
+           chars_format fmt /*= std::chars_format::general*/) noexcept {
   return from_chars_caller<T>::call(first, last, value,
                                     parse_options_t<UC>(fmt));
 }
@@ -4741,7 +4741,7 @@ from_chars_float_advanced(UC const *first, UC const *last, T &value,
   chars_format const fmt = detail::adjust_for_feature_macros(options.format);
 
   from_chars_result_t<UC> answer;
-  if (uint64_t(fmt & chars_format::skip_white_space)) {
+  if (uint64_t(fmt & std::chars_format::skip_white_space)) {
     while ((first != last) && fast_float::is_space(*first)) {
       first++;
     }
@@ -4756,7 +4756,7 @@ from_chars_float_advanced(UC const *first, UC const *last, T &value,
           ? parse_number_string<true, UC>(first, last, options)
           : parse_number_string<false, UC>(first, last, options);
   if (!pns.valid) {
-    if (uint64_t(fmt & chars_format::no_infnan)) {
+    if (uint64_t(fmt & std::chars_format::no_infnan)) {
       answer.ec = std::errc::invalid_argument;
       answer.ptr = first;
       return answer;
@@ -4875,7 +4875,7 @@ from_chars_int_advanced(UC const *first, UC const *last, T &value,
   int32_t const base = options.base;
 
   from_chars_result_t<UC> answer;
-  if (uint64_t(fmt & chars_format::skip_white_space)) {
+  if (uint64_t(fmt & std::chars_format::skip_white_space)) {
     while ((first != last) && fast_float::is_space(*first)) {
       first++;
     }

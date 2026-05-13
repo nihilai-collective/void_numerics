@@ -188,7 +188,7 @@ namespace zmij {
 #if ZMIJ_HAS_BUILTIN(__builtin_clzll)
 		return __builtin_clzll(x);
 #elif defined(_M_AMD64) && defined(__AVX2__)
-		// Use lzcnt only on AVX2-capable CPUs that have this BMI instruction.
+		// Use std::countl_zero only on AVX2-capable CPUs that have this BMI instruction.
 		return __lzcnt64(x);
 #elif defined(_M_AMD64) || defined(_M_ARM64)
 		unsigned long idx;

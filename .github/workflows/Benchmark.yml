@@ -15,8 +15,8 @@ jobs:
           - os: ubuntu-latest
             compiler: clang
             name: "Ubuntu Clang"
-            cmake_cxx: clang++-20
-            cmake_cc: clang-20
+            cmake_cxx: clang++-22
+            cmake_cc: clang-22
           - os: ubuntu-latest
             compiler: gcc
             name: "Ubuntu GCC"
@@ -49,7 +49,7 @@ jobs:
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod u+x llvm.sh
-          sudo ./llvm.sh 20
+          sudo ./llvm.sh 22
 
       - name: Setup GCC (Ubuntu)
         if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc'

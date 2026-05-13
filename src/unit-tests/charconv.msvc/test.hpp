@@ -144,10 +144,10 @@ void initialize_randomness(mt19937_64& mt64, const int argc, char** const /*argv
 	}
 }
 
-static_assert((chars_format::scientific & chars_format::fixed) == chars_format{});
-static_assert((chars_format::scientific & chars_format::hex) == chars_format{});
-static_assert((chars_format::fixed & chars_format::hex) == chars_format{});
-static_assert(chars_format::general == (chars_format::fixed | chars_format::scientific));
+static_assert((std::chars_format::scientific & std::chars_format::fixed) == chars_format{});
+static_assert((std::chars_format::scientific & std::chars_format::hex) == chars_format{});
+static_assert((std::chars_format::fixed & std::chars_format::hex) == chars_format{});
+static_assert(std::chars_format::general == (std::chars_format::fixed | std::chars_format::scientific));
 
 template<typename T, typename Optional> void test_common_to_chars(const T value, const Optional opt_arg, const optional<int> opt_precision, const string_view correct) {
 	// Important: Test every effective buffer size from 0 through correct.size() and slightly beyond. For the sizes
@@ -618,7 +618,7 @@ template<bool IsDouble> void test_floating_prefix(const conditional_t<IsDouble, 
 		const FloatingType input = std::bit_cast<FloatingType>(bits);
 
 		{
-			const auto to_result = to_chars(buffer, end(buffer), input, chars_format::scientific);
+			const auto to_result = to_chars(buffer, end(buffer), input, std::chars_format::scientific);
 			assert_message_bits(to_result.ec == errc{}, "to_result.ec", bits);
 #ifdef TEST_HAS_FROM_CHARS_FLOATING_POINT
 			const char* const last = to_result.ptr;
@@ -633,7 +633,7 @@ template<bool IsDouble> void test_floating_prefix(const conditional_t<IsDouble, 
 
 		{
 			// Also verify that to_chars() and sprintf() emit the same output for integers in fixed notation.
-			const auto fixed_result = to_chars(fixed_buffer, end(fixed_buffer), input, chars_format::fixed);
+			const auto fixed_result = to_chars(fixed_buffer, end(fixed_buffer), input, std::chars_format::fixed);
 			assert_message_bits(fixed_result.ec == errc{}, "fixed_result.ec", bits);
 			const string_view fixed_sv(fixed_buffer, static_cast<std::size_t>(fixed_result.ptr - fixed_buffer));
 			if (find(fixed_sv.begin(), fixed_sv.end(), '.') == fixed_sv.end()) {
@@ -671,13 +671,13 @@ template<bool IsDouble> void test_floating_hex_prefix(const conditional_t<IsDoub
 		const UIntType bits		 = prefix + frac;
 		const FloatingType input = std::bit_cast<FloatingType>(bits);
 
-		const auto to_result = to_chars(buffer, end(buffer), input, chars_format::hex);
+		const auto to_result = to_chars(buffer, end(buffer), input, std::chars_format::hex);
 		assert_message_bits(to_result.ec == errc{}, "(hex) to_result.ec", bits);
 
 #ifdef TEST_HAS_FROM_CHARS_FLOATING_POINT
 		const char* const last = to_result.ptr;
 
-		const auto from_result = from_chars(buffer, last, val, chars_format::hex);
+		const auto from_result = from_chars(buffer, last, val, std::chars_format::hex);
 
 		assert_message_bits(from_result.ptr == last, "(hex) from_result.ptr", bits);
 		assert_message_bits(from_result.ec == errc{}, "(hex) from_result.ec", bits);
@@ -708,14 +708,14 @@ template<bool IsDouble> void test_floating_precision_prefix(const conditional_t<
 
 	// 1 character for a negative sign
 	// + worst cases: 0x1.fffffffffffffp-1022 and 0x1.fffffep-126f
-	constexpr std::size_t general_buffer_size = 1 + (IsDouble ? 773 : 117);
+	constexpr std::size_t general_buffer_size = 1 + (IsDouble ? 1024 : 512);
 	char general_buffer[general_buffer_size];
 	char general_stdio_buffer[general_buffer_size + 1];// + null terminator
 
 	for (std::uint32_t frac = 0; frac < Fractions; ++frac) {
 		const UIntType bits		 = prefix + frac;
 		const FloatingType input = std::bit_cast<FloatingType>(bits);
-		auto result				 = to_chars(charconv_buffer, end(charconv_buffer), input, chars_format::fixed, precision);
+		auto result				 = to_chars(charconv_buffer, end(charconv_buffer), input, std::chars_format::fixed, precision);
 		assert_message_bits(result.ec == errc{}, "to_chars fixed precision", bits);
 		string_view charconv_sv(charconv_buffer, static_cast<std::size_t>(result.ptr - charconv_buffer));
 #if VN_COMPILER_MSVC
@@ -726,7 +726,7 @@ template<bool IsDouble> void test_floating_precision_prefix(const conditional_t<
 		assert_message_bits(stdio_ret != -1, "sprintf fixed precision", bits);
 		string_view stdio_sv(stdio_buffer);
 		assert_message_bits(charconv_sv == stdio_sv, "fixed precision output", bits);
-		result = to_chars(charconv_buffer, end(charconv_buffer), input, chars_format::scientific, precision);
+		result = to_chars(charconv_buffer, end(charconv_buffer), input, std::chars_format::scientific, precision);
 		assert_message_bits(result.ec == errc{}, "to_chars scientific precision", bits);
 		charconv_sv = string_view(charconv_buffer, static_cast<std::size_t>(result.ptr - charconv_buffer));
 #if VN_COMPILER_MSVC
@@ -737,7 +737,7 @@ template<bool IsDouble> void test_floating_precision_prefix(const conditional_t<
 		assert_message_bits(stdio_ret != -1, "sprintf scientific precision", bits);
 		stdio_sv = stdio_buffer;
 		assert_message_bits(charconv_sv == stdio_sv, "scientific precision output", bits);
-		result = to_chars(general_buffer, end(general_buffer), input, chars_format::general, 5000);
+		result = to_chars(general_buffer, end(general_buffer), input, std::chars_format::general, 5000);
 		assert_message_bits(result.ec == errc{}, "to_chars general precision", bits);
 		charconv_sv = string_view(general_buffer, static_cast<std::size_t>(result.ptr - general_buffer));
 #if VN_COMPILER_MSVC
@@ -814,7 +814,7 @@ template<typename T> void test_floating_from_chars(const chars_format fmt) {
 	test_from_chars<T>("-na", fmt, 0, inv_arg);// '-' followed by bogus incomplete nan
 	test_from_chars<T>("--1", fmt, 0, inv_arg);// '-' can't be repeated
 
-	if (fmt != chars_format::hex) {// "e5" are valid hexits
+	if (fmt != std::chars_format::hex) {// "e5" are valid hexits
 		test_from_chars<T>("e5", fmt, 0, inv_arg);// exponent-part without digits is bogus
 		test_from_chars<T>("-e5", fmt, 0, inv_arg);// '-' followed by bogus exponent-part
 	}
@@ -867,7 +867,7 @@ template<typename T> void test_floating_from_chars(const chars_format fmt) {
 	#endif
 
 	switch (fmt) {
-		case chars_format::general:
+		case std::chars_format::general:
 			test_from_chars<T>("1729", fmt, 4, errc{}, T{ 1729 });
 			test_from_chars<T>("1729e3", fmt, 6, errc{}, T{ 1729000 });
 			test_from_chars<T>("10", fmt, 2, errc{}, T{ 10 });
@@ -902,15 +902,15 @@ template<typename T> void test_floating_from_chars(const chars_format fmt) {
 			test_from_chars<T>("." + string(500, '0') + "1", fmt, 502, errc::result_out_of_range, T{ 0 });
 			test_from_chars<T>("-." + string(500, '0') + "1", fmt, 503, errc::result_out_of_range, T{ -0.0 });
 			break;
-		case chars_format::scientific:
+		case std::chars_format::scientific:
 			test_from_chars<T>("1729", fmt, 0, inv_arg);
 			test_from_chars<T>("1729e3", fmt, 6, errc{}, T{ 1729000 });
 			break;
-		case chars_format::fixed:
+		case std::chars_format::fixed:
 			test_from_chars<T>("1729", fmt, 4, errc{}, T{ 1729 });
 			test_from_chars<T>("1729e3", fmt, 4, errc{}, T{ 1729 });
 			break;
-		case chars_format::hex:
+		case std::chars_format::hex:
 			test_from_chars<T>("0x123", fmt, 1, errc{}, T{ 0 });
 			test_from_chars<T>("a0", fmt, 2, errc{}, T{ 160 });
 			test_from_chars<T>("a1.", fmt, 3, errc{}, T{ 161 });
@@ -956,7 +956,7 @@ void all_floating_tests(mt19937_64& mt64) {
 	test_floating_prefixes(mt64);
 
 #ifdef TEST_HAS_FROM_CHARS_FLOATING_POINT
-	for (const auto& fmt: { chars_format::general, chars_format::scientific, chars_format::fixed, chars_format::hex }) {
+	for (const auto& fmt: { std::chars_format::general, std::chars_format::scientific, std::chars_format::fixed, std::chars_format::hex }) {
 		test_floating_from_chars<float>(fmt);
 		test_floating_from_chars<double>(fmt);
 	}
@@ -980,18 +980,18 @@ void all_floating_tests(mt19937_64& mt64) {
 		constexpr double correct_double		= 0x1.fffffdp0;
 		constexpr float twice_rounded_float = 0x1.fffffcp0f;
 
-		test_from_chars<float>(lwg_2403, chars_format::general, 56, errc{}, correct_float);
-		test_from_chars<double>(lwg_2403, chars_format::general, 56, errc{}, correct_double);
+		test_from_chars<float>(lwg_2403, std::chars_format::general, 56, errc{}, correct_float);
+		test_from_chars<double>(lwg_2403, std::chars_format::general, 56, errc{}, correct_double);
 		static_assert(static_cast<float>(correct_double) == twice_rounded_float);
 	}
 
 	// See floating_point_test_cases.hpp.
 	for (const auto& p: floating_point_test_cases_float) {
-		test_from_chars<float>(p.first, chars_format::general, strlen(p.first), errc{}, std::bit_cast<float>(p.second));
+		test_from_chars<float>(p.first, std::chars_format::general, strlen(p.first), errc{}, std::bit_cast<float>(p.second));
 	}
 
 	for (const auto& p: floating_point_test_cases_double) {
-		test_from_chars<double>(p.first, chars_format::general, strlen(p.first), errc{}, std::bit_cast<double>(p.second));
+		test_from_chars<double>(p.first, std::chars_format::general, strlen(p.first), errc{}, std::bit_cast<double>(p.second));
 	}
 #endif//  TEST_HAS_FROM_CHARS_FLOATING_POINT
 

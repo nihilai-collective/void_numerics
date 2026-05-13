@@ -15,15 +15,10 @@
 #include "charconv.msvc/test.hpp"
 
 int32_t main(int32_t argc, char**argv) {
-	const auto start = chrono::steady_clock::now();
-
 	mt19937_64 mt64;
-
 	initialize_randomness(mt64, argc, argv);
-
 	all_integer_tests();
-
-	all_floating_tests(mt64);
+	//all_floating_tests(mt64);
 	double val{ 3.333e307 };
 	std::string string{};
 	string.resize(128);

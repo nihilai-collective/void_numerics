@@ -41,66 +41,6 @@ namespace vn {
 			return count;
 		}
 
-		template<uint8_types v_type> VN_FORCE_INLINE constexpr v_type tzcnt(const v_type value) noexcept {
-			return tzcnt_constexpr(value);
-		}
-
-		template<uint16_types v_type> VN_FORCE_INLINE constexpr v_type tzcnt(const v_type value) noexcept {
-#if VN_COMPILER_MSVC
-	#if VN_ARCH_ARM64
-			uint64_t trailing_zero = 0;
-			if (_BitScanForward(&trailing_zero, static_cast<uint64_t>(value))) {
-				return static_cast<v_type>(trailing_zero);
-			} else {
-				return 16;
-			}
-	#else
-			return static_cast<v_type>(_tzcnt_u16(value));
-	#endif
-#elif VN_COMPILER_CLANG || VN_COMPILER_GNU
-			return (value == 0) ? 16 : static_cast<v_type>(__builtin_ctz(static_cast<uint32_t>(value)));
-#else
-			return tzcnt_constexpr(value);
-#endif
-		}
-
-		template<uint32_types v_type> VN_FORCE_INLINE constexpr v_type tzcnt(const v_type value) noexcept {
-#if VN_COMPILER_MSVC
-	#if VN_ARCH_ARM64
-			uint64_t trailing_zero = 0;
-			if (_BitScanForward(&trailing_zero, static_cast<uint64_t>(value))) {
-				return static_cast<v_type>(trailing_zero);
-			} else {
-				return 32;
-			}
-	#else
-			return static_cast<v_type>(_tzcnt_u32(value));
-	#endif
-#elif VN_COMPILER_CLANG || VN_COMPILER_GNU
-			return (value == 0) ? 32 : static_cast<v_type>(__builtin_ctz(static_cast<uint32_t>(value)));
-#else
-			return tzcnt_constexpr(value);
-#endif
-		}
-
-		template<uint64_types v_type> VN_FORCE_INLINE constexpr v_type tzcnt(const v_type value) noexcept {
-#if VN_COMPILER_MSVC
-	#if VN_ARCH_ARM64
-			uint64_t trailing_zero = 0;
-			if (_BitScanForward64(&trailing_zero, static_cast<uint32_t __int64>(value))) {
-				return static_cast<v_type>(trailing_zero);
-			} else {
-				return 64;
-			}
-	#else
-			return static_cast<v_type>(_tzcnt_u64(value));
-	#endif
-#elif VN_COMPILER_CLANG || VN_COMPILER_GNU
-			return (value == 0) ? 64 : static_cast<v_type>(__builtin_ctzll(static_cast<uint64_t>(value)));
-#else
-			return tzcnt_constexpr(value);
-#endif
-		}
 		template<typename v_type> VN_ALIGN(64)
 		static constexpr const std::make_unsigned_t<v_type>* __restrict raw_comp_vals_pos{ [] {
 			VN_ALIGN(64)
@@ -157,7 +97,7 @@ namespace vn {
 					t['e'] = true;
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 
 			VN_ALIGN(64)
@@ -170,7 +110,7 @@ namespace vn {
 					t['e'] = true;
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -189,7 +129,7 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -216,7 +156,7 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 
 			VN_ALIGN(64)
@@ -230,7 +170,7 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -247,7 +187,7 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -265,7 +205,7 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -281,7 +221,7 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -298,7 +238,7 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -316,7 +256,7 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -387,7 +327,7 @@ namespace vn {
 					} };
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -408,7 +348,7 @@ namespace vn {
 					} };
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -416,7 +356,7 @@ namespace vn {
 			VN_ALIGN(64)
 			static constexpr const mul_shift_entry<v_type>* __restrict values{ [] {
 				VN_ALIGN(64)
-				constexpr auto table{ [] {
+				static constexpr auto table{ [] {
 					std::array<mul_shift_entry<v_type>, 16> t{
 						mul_shift_entry<v_type>{ 0xcccccccccccccccd, 67 },
 						{ 0xa3d70a3d70a3d70b, 70 },
@@ -437,7 +377,7 @@ namespace vn {
 					};
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -524,8 +464,7 @@ namespace vn {
 		template<uint16_types v_type> struct fast_div_table<v_type> {
 			VN_ALIGN(64)
 			static constexpr const fast_div_entry<uint32_t>* __restrict values{ [] {
-				VN_ALIGN(64)
-				constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<fast_div_entry<uint32_t>, 4> t{
 						fast_div_entry<uint32_t>{ 0xcccccccd, 858993459, 1 },
 						{ 0xc28f5c29, 171798691, 3 },
@@ -534,15 +473,14 @@ namespace vn {
 					};
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
 		template<uint32_types v_type> struct fast_div_table<v_type> {
 			VN_ALIGN(64)
 			static constexpr const fast_div_entry<uint32_t>* __restrict values{ [] {
-				VN_ALIGN(64)
-				constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<fast_div_entry<uint32_t>, 8> t{
 						fast_div_entry<uint32_t>{ 0xcccccccd, 858993459, 1 },
 						{ 0xc28f5c29, 171798691, 3 },
@@ -555,15 +493,14 @@ namespace vn {
 					};
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
 		template<uint64_types v_type> struct fast_div_table<v_type> {
 			VN_ALIGN(64)
 			static constexpr const fast_div_entry<uint64_t>* __restrict values{ [] {
-				VN_ALIGN(64)
-				constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<fast_div_entry<uint64_t>, 18> t{
 						fast_div_entry<uint64_t>{ 0xcccccccccccccccd, 3689348814741910323, 1 },
 						{ 0x8f5c28f5c28f5c29, 737869762948382064, 3 },
@@ -586,7 +523,7 @@ namespace vn {
 					};
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -655,7 +592,7 @@ namespace vn {
 				std::memcpy(&chunk, str, 2);
 				uint16_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), 2>;
 
-				return (diff == 0) ? 2 : tzcnt(diff) >> 3;
+				return (diff == 0) ? 2 : std::countr_zero(diff) >> 3;
 			}
 		};
 
@@ -665,7 +602,7 @@ namespace vn {
 				std::memcpy(&chunk, str, 3);
 				uint32_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), 3>;
 
-				return (diff == 0) ? 3 : tzcnt(diff) >> 3;
+				return (diff == 0) ? 3 : std::countr_zero(diff) >> 3;
 			}
 		};
 
@@ -674,7 +611,7 @@ namespace vn {
 				uint32_t chunk;
 				std::memcpy(&chunk, str, 4);
 				uint32_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), 4>;
-				return (diff == 0) ? 4 : tzcnt(diff) >> 3;
+				return (diff == 0) ? 4 : std::countr_zero(diff) >> 3;
 			}
 		};
 
@@ -683,7 +620,7 @@ namespace vn {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 5);
 				uint64_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), 5>;
-				return (diff == 0) ? 5 : tzcnt(diff) >> 3;
+				return (diff == 0) ? 5 : std::countr_zero(diff) >> 3;
 			}
 		};
 
@@ -692,7 +629,7 @@ namespace vn {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 6);
 				uint64_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), 6>;
-				return (diff == 0) ? 6 : tzcnt(diff) >> 3;
+				return (diff == 0) ? 6 : std::countr_zero(diff) >> 3;
 			}
 		};
 
@@ -701,7 +638,7 @@ namespace vn {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 7);
 				uint64_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), 7>;
-				return (diff == 0) ? 7 : tzcnt(diff) >> 3;
+				return (diff == 0) ? 7 : std::countr_zero(diff) >> 3;
 			}
 		};
 
@@ -710,7 +647,7 @@ namespace vn {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), 8>;
-				return (diff == 0) ? 8 : tzcnt(diff) >> 3;
+				return (diff == 0) ? 8 : std::countr_zero(diff) >> 3;
 			}
 		};
 
@@ -720,7 +657,7 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				return (str[8] == '0') ? 9 : 8;
 			}
 		};
@@ -731,11 +668,11 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				uint16_t chunk2;
 				std::memcpy(&chunk2, str + 8, 2);
 				uint16_t diff2 = chunk2 ^ 0x3030;
-				return (diff2 == 0) ? 10 : 8 + (tzcnt(diff2) >> 3);
+				return (diff2 == 0) ? 10 : 8 + (std::countr_zero(diff2) >> 3);
 			}
 		};
 
@@ -745,11 +682,11 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				uint32_t chunk2;
 				std::memcpy(&chunk2, str + 8, 3);
 				uint32_t diff2 = chunk2 ^ 0x303030;
-				return (diff2 == 0) ? 11 : 8 + (tzcnt(diff2) >> 3);
+				return (diff2 == 0) ? 11 : 8 + (std::countr_zero(diff2) >> 3);
 			}
 		};
 
@@ -759,11 +696,11 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				uint32_t chunk2;
 				std::memcpy(&chunk2, str + 8, 4);
 				uint32_t diff2 = chunk2 ^ 0x30303030;
-				return (diff2 == 0) ? 12 : 8 + (tzcnt(diff2) >> 3);
+				return (diff2 == 0) ? 12 : 8 + (std::countr_zero(diff2) >> 3);
 			}
 		};
 
@@ -773,11 +710,11 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				uint64_t chunk2;
 				std::memcpy(&chunk2, str + 8, 5);
 				uint64_t diff2 = chunk2 ^ 0x3030303030ULL;
-				return (diff2 == 0) ? 13 : 8 + (tzcnt(diff2) >> 3);
+				return (diff2 == 0) ? 13 : 8 + (std::countr_zero(diff2) >> 3);
 			}
 		};
 
@@ -787,11 +724,11 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				uint64_t chunk2;
 				std::memcpy(&chunk2, str + 8, 6);
 				uint64_t diff2 = chunk2 ^ 0x303030303030ULL;
-				return (diff2 == 0) ? 14 : 8 + (tzcnt(diff2) >> 3);
+				return (diff2 == 0) ? 14 : 8 + (std::countr_zero(diff2) >> 3);
 			}
 		};
 
@@ -801,11 +738,11 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				uint64_t chunk2;
 				std::memcpy(&chunk2, str + 8, 7);
 				uint64_t diff2 = chunk2 ^ 0x30303030303030ULL;
-				return (diff2 == 0) ? 15 : 8 + (tzcnt(diff2) >> 3);
+				return (diff2 == 0) ? 15 : 8 + (std::countr_zero(diff2) >> 3);
 			}
 		};
 
@@ -815,11 +752,11 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				uint64_t chunk2;
 				std::memcpy(&chunk2, str + 8, 8);
 				uint64_t diff2 = chunk2 ^ 0x3030303030303030ULL;
-				return (diff2 == 0) ? 16 : 8 + (tzcnt(diff2) >> 3);
+				return (diff2 == 0) ? 16 : 8 + (std::countr_zero(diff2) >> 3);
 			}
 		};
 
@@ -829,11 +766,11 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				std::memcpy(&chunk, str + 8, 8);
 				diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return 8 + (tzcnt(diff) >> 3);
+					return 8 + (std::countr_zero(diff) >> 3);
 				return (str[16] == '0') ? 17 : 16;
 			}
 		};
@@ -844,15 +781,15 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				std::memcpy(&chunk, str + 8, 8);
 				diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return 8 + (tzcnt(diff) >> 3);
+					return 8 + (std::countr_zero(diff) >> 3);
 				uint16_t chunk2;
 				std::memcpy(&chunk2, str + 16, 2);
 				uint16_t diff2 = chunk2 ^ 0x3030;
-				return (diff2 == 0) ? 18 : 16 + (tzcnt(diff2) >> 3);
+				return (diff2 == 0) ? 18 : 16 + (std::countr_zero(diff2) >> 3);
 			}
 		};
 
@@ -862,15 +799,15 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				std::memcpy(&chunk, str + 8, 8);
 				diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return 8 + (tzcnt(diff) >> 3);
+					return 8 + (std::countr_zero(diff) >> 3);
 				uint32_t chunk2;
 				std::memcpy(&chunk2, str + 16, 3);
 				uint32_t diff2 = chunk2 ^ 0x303030;
-				return (diff2 == 0) ? 19 : 16 + (tzcnt(diff2) >> 3);
+				return (diff2 == 0) ? 19 : 16 + (std::countr_zero(diff2) >> 3);
 			}
 		};
 
@@ -880,15 +817,15 @@ namespace vn {
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return tzcnt(diff) >> 3;
+					return std::countr_zero(diff) >> 3;
 				std::memcpy(&chunk, str + 8, 8);
 				diff = chunk ^ 0x3030303030303030ULL;
 				if (diff != 0)
-					return 8 + (tzcnt(diff) >> 3);
+					return 8 + (std::countr_zero(diff) >> 3);
 				uint32_t chunk2;
 				std::memcpy(&chunk2, str + 16, 4);
 				uint32_t diff2 = chunk2 ^ 0x30303030;
-				return (diff2 == 0) ? 20 : 16 + (tzcnt(diff2) >> 3);
+				return (diff2 == 0) ? 20 : 16 + (std::countr_zero(diff2) >> 3);
 			}
 		};
 
@@ -1007,7 +944,7 @@ namespace vn {
 				if (i + n_bytes <= length) {
 					v_type non_digit_mask = static_cast<v_type>(~static_cast<v_type>(swar_collect_digit_indices<v_type>::impl(text)));
 					if (non_digit_mask != static_cast<v_type>(0)) {
-						i += tzcnt(non_digit_mask) >> 3;
+						i += std::countr_zero(non_digit_mask) >> 3;
 						return false;
 					}
 					text += n_bytes;

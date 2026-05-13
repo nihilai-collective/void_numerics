@@ -192,7 +192,7 @@ namespace vn_zmij {
 #if VN_ZMIJ_HAS_BUILTIN(__builtin_clzll)
 		return __builtin_clzll(x);
 #elif defined(_M_AMD64) && defined(__AVX2__)
-		// Use lzcnt only on AVX2-capable CPUs that have this BMI instruction.
+		// Use std::countl_zero only on AVX2-capable CPUs that have this BMI instruction.
 		return __lzcnt64(x);
 #elif defined(_M_AMD64) || defined(_M_ARM64)
 		unsigned long idx;
@@ -794,7 +794,7 @@ namespace vn_zmij {
 		int len;
 	};
 
-	auto to_bcd8(uint64_t abcdefgh) noexcept -> bcd_result {
+	static auto to_bcd8(uint64_t abcdefgh) noexcept -> bcd_result {
 		if constexpr (!VN_ZMIJ_USE_SSE && !VN_ZMIJ_USE_NEON) {
 			// An optimization from Xiang JunBo.
 			// Three steps BCD. Base 10000 -> base 100 -> base 10.
@@ -829,9 +829,9 @@ namespace vn_zmij {
 		// Evaluate the 4-digit limbs and arrange them such that we get a result which
 		// is in the correct order.
 		uint64_t abcd_efgh = (abcdefgh << 32) - uint64_t((10000ull << 32) - 1) * ((abcdefgh * div10k_sig) >> div10k_exp);
-		__m128i v		   = to_bcd_4x4(_mm_set_epi64x(0, abcd_efgh), *d);
+		__m128i v		   = to_bcd_4x4(_mm_set_epi64x(0, static_cast<int64_t>(abcd_efgh)), *d);
 	#if defined(__x86_64__) || defined(_M_X64)
-		uint64_t bcd = _mm_cvtsi128_si64(v);
+		uint64_t bcd = static_cast<uint64_t>(_mm_cvtsi128_si64(v));
 	#else
 		uint64_t bcd = uint64_t(_mm_cvtsi128_si32(_mm_srli_si128(v, 4))) << 32 | uint32_t(_mm_cvtsi128_si32(v));
 	#endif
@@ -893,7 +893,7 @@ namespace vn_zmij {
 
 		// Computed against current bcd (rather than the post-bswap bcd) so the mask
 		// is derived in parallel with the shuffle on the SSE4.1 path.
-		uint64_t mask = _mm_movemask_epi8(_mm_cmpgt_epi8(bcd, _mm_setzero_si128()));
+		uint64_t mask = static_cast<uint64_t>(_mm_movemask_epi8(_mm_cmpgt_epi8(bcd, _mm_setzero_si128())));
 		// Trailing zeros are in the low bits for SSE4.1, the high bits for SSE2.
 		int len = static_cast<int32_t>(VN_ZMIJ_USE_SSE4_1 ? 16 - ctz(mask) : 64 - clz(mask));
 	#if VN_ZMIJ_USE_SSE4_1
@@ -971,7 +971,8 @@ namespace vn_zmij {
 
 		constexpr uint64_t log10_2_sig = 78'913;
 		constexpr int log10_2_exp	   = 18;
-		int dec_exp = static_cast<int32_t>(use_umul128_hi64 ? umul128_hi64(bin_exp, log10_2_sig << (64 - log10_2_exp)) : compute_dec_exp(static_cast<int32_t>(bin_exp)));
+		int dec_exp					   = static_cast<int32_t>(use_umul128_hi64 ? umul128_hi64(static_cast<uint64_t>(bin_exp), log10_2_sig << (64 - log10_2_exp))
+																			   : static_cast<uint64_t>(compute_dec_exp(static_cast<int32_t>(bin_exp))));
 		VN_ZMIJ_ASM(("" : "+r"(dec_exp)));// Force 32-bit reg for sxtw addressing.
 		unsigned char shift =
 			exp_shift_table::enable ? d.exp_shifts.data[bin_exp + float_traits<double>::exp_offset] : compute_exp_shift(static_cast<int32_t>(bin_exp), dec_exp + 1) + extra_shift;
@@ -1114,11 +1115,11 @@ namespace vn_zmij {
 
 			// Write significand/fixed.
 			char* start			   = buffer;
-			auto dig			   = to_digits<traits::num_bits>(dec.sig, *d);
+			auto dig			   = to_digits<traits::num_bits>(static_cast<uint64_t>(dec.sig), *d);
 			constexpr int bcd_size = traits::num_bits == 64 ? 16 : 8;
 			if (dec_exp >= traits::min_fixed_dec_exp && dec_exp <= traits::max_fixed_dec_exp) {
 				memcpy(start, &zeros, 8);// For dec_exp < 0.
-				char last_digit = '0' + (-static_cast<int32_t>(has_last_digit) & dec.last_digit);
+				char last_digit = static_cast<char>('0' + (-static_cast<int32_t>(has_last_digit) & dec.last_digit));
 				int num_digits	= has_last_digit ? bcd_size : dig.num_digits - 1;
 
 				// Materialize the base early so the entry address is `base + idx*32`;
@@ -1155,7 +1156,7 @@ namespace vn_zmij {
 			} else {
 				uint16_t e_sign = dec_exp >= 0 ? ('+' << 8 | 'e') : ('-' << 8 | 'e');
 				if constexpr (is_big_endian)
-					e_sign = e_sign << 8 | e_sign >> 8;
+					e_sign = static_cast<uint16_t>(e_sign << 8 | e_sign >> 8);
 				memcpy(buffer, &e_sign, 2);
 				buffer += 2;
 				dec_exp = dec_exp >= 0 ? dec_exp : -dec_exp;

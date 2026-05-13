@@ -44,7 +44,7 @@ namespace vn {
 
 		template<uint_types v_type> struct to_chars_internal<v_type, 5ULL> {
 			VN_FORCE_INLINE static char* impl(char* __restrict buf, const v_type value) noexcept {
-				const v_type a = static_cast<v_type>(static_cast<uint64_t>(value) * 0xd1b71759U >> 45);
+				const v_type a = multiply_and_shift<v_type, 10000ULL>::impl(value);
 				*buf		   = char_table_1_digit_data[a];
 				std::memcpy(buf + 1, char_table_4_digit_data + value - a * 10000, 4ULL);
 				return buf + 5;
@@ -53,7 +53,7 @@ namespace vn {
 
 		template<uint_types v_type> struct to_chars_internal<v_type, 6ULL> {
 			VN_FORCE_INLINE static char* impl(char* __restrict buf, const v_type value) noexcept {
-				const uint32_t ab = static_cast<uint64_t>(value) * 0xd1b71759U >> 45;
+				const uint32_t ab = multiply_and_shift<uint32_t, 10000ULL>::impl(static_cast<uint32_t>(value));
 				std::memcpy(buf, char_table_2_digit_data + ab, 2ULL);
 				std::memcpy(buf + 2, char_table_4_digit_data + value - (ab * 10000U), 4ULL);
 				return buf + 6;
@@ -62,7 +62,7 @@ namespace vn {
 
 		template<uint_types v_type> struct to_chars_internal<v_type, 7ULL> {
 			VN_FORCE_INLINE static char* impl(char* __restrict buf, const v_type value) noexcept {
-				const uint32_t abc = static_cast<uint64_t>(value) * 0xd1b71759U >> 45;
+				const uint32_t abc = multiply_and_shift<uint32_t, 10000U>::impl(static_cast<uint32_t>(value));
 				std::memcpy(buf, char_table_3_digit_data + abc, 3ULL);
 				std::memcpy(buf + 3, char_table_4_digit_data + value - (abc * 10000U), 4ULL);
 				return buf + 7;
@@ -71,7 +71,7 @@ namespace vn {
 
 		template<uint_types v_type> struct to_chars_internal<v_type, 8ULL> {
 			VN_FORCE_INLINE static char* impl(char* __restrict buf, const v_type value) noexcept {
-				const uint32_t abcd = static_cast<uint64_t>(value) * 0xd1b71759U >> 45;
+				const uint32_t abcd = multiply_and_shift<uint32_t, 10000U>::impl(static_cast<uint32_t>(value));
 				std::memcpy(buf, char_table_4_digit_data + abcd, 4ULL);
 				std::memcpy(buf + 4, char_table_4_digit_data + value - (abcd * 10000U), 4ULL);
 				return buf + 8;
@@ -82,7 +82,7 @@ namespace vn {
 			VN_FORCE_INLINE static char* impl(char* __restrict buf, const v_type value) noexcept {
 				const uint32_t a		= multiply_and_shift<uint32_t, 100000000ULL>::impl(static_cast<uint32_t>(value));
 				const uint32_t bcdefghi = static_cast<uint32_t>(value - a * 100000000ULL);
-				const uint32_t bcde		= static_cast<uint64_t>(bcdefghi) * 0xd1b71759U >> 45;
+				const uint32_t bcde		= static_cast<uint32_t>(multiply_and_shift<v_type, 10000U>::impl(bcdefghi));
 				const uint32_t fghi		= bcdefghi - (bcde * 10000U);
 				*buf					= char_table_1_digit_data[a];
 				std::memcpy(buf + 1, char_table_4_digit_data + bcde, 4ULL);
@@ -95,7 +95,7 @@ namespace vn {
 			VN_FORCE_INLINE static char* impl(char* __restrict buf, const v_type value) noexcept {
 				const uint32_t ab		= static_cast<uint32_t>(multiply_and_shift<v_type, 100000000ULL>::impl(value));
 				const uint32_t cdefghij = static_cast<uint32_t>(value - ab * 100000000ULL);
-				const uint32_t cdef		= static_cast<uint64_t>(cdefghij) * 0xd1b71759U >> 45;
+				const uint32_t cdef		= static_cast<uint32_t>(multiply_and_shift<v_type, 10000U>::impl(cdefghij));
 				const uint32_t ghij		= cdefghij - (cdef * 10000U);
 				std::memcpy(buf, char_table_2_digit_data + ab, 2ULL);
 				std::memcpy(buf + 2, char_table_4_digit_data + cdef, 4ULL);
@@ -108,7 +108,7 @@ namespace vn {
 			VN_FORCE_INLINE static char* impl(char* __restrict buf, const v_type value) noexcept {
 				const uint32_t abc		= static_cast<uint32_t>(multiply_and_shift<v_type, 100000000ULL>::impl(value));
 				const uint32_t defghijk = static_cast<uint32_t>(value - abc * 100000000ULL);
-				const uint32_t defg		= static_cast<uint64_t>(defghijk) * 0xd1b71759U >> 45;
+				const uint32_t defg		= static_cast<uint32_t>(multiply_and_shift<v_type, 10000U>::impl(defghijk));
 				const uint32_t hijk		= defghijk - (defg * 10000U);
 				std::memcpy(buf, char_table_3_digit_data + abc, 3ULL);
 				std::memcpy(buf + 3, char_table_4_digit_data + defg, 4ULL);
@@ -121,7 +121,7 @@ namespace vn {
 			VN_FORCE_INLINE static char* impl(char* __restrict buf, const v_type value) noexcept {
 				const uint32_t abcd		= static_cast<uint32_t>(multiply_and_shift<v_type, 100000000ULL>::impl(value));
 				const uint32_t efghijkl = static_cast<uint32_t>(value - abcd * 100000000ULL);
-				const uint32_t efgh		= static_cast<uint64_t>(efghijkl) * 0xd1b71759U >> 45;
+				const uint32_t efgh		= static_cast<uint32_t>(multiply_and_shift<v_type, 10000U>::impl(efghijkl));
 				const uint32_t ijkl		= efghijkl - (efgh * 10000U);
 				std::memcpy(buf, char_table_4_digit_data + abcd, 4ULL);
 				std::memcpy(buf + 4, char_table_4_digit_data + efgh, 4ULL);
@@ -134,9 +134,9 @@ namespace vn {
 			VN_FORCE_INLINE static char* impl(char* __restrict buf, const v_type value) noexcept {
 				const uint32_t abcde	= static_cast<uint32_t>(multiply_and_shift<v_type, 100000000ULL>::impl(value));
 				const uint32_t fghijklm = static_cast<uint32_t>(value - abcde * 100000000ULL);
-				const uint32_t a		= static_cast<uint64_t>(abcde) * 0xd1b71759U >> 45;
+				const uint32_t a		= static_cast<uint32_t>(multiply_and_shift<v_type, 10000U>::impl(abcde));
 				const uint32_t bcde		= abcde - (a * 10000U);
-				const uint32_t fghi		= static_cast<uint64_t>(fghijklm) * 0xd1b71759U >> 45;
+				const uint32_t fghi		= static_cast<uint32_t>(multiply_and_shift<v_type, 10000U>::impl(fghijklm));
 				const uint32_t klm		= fghijklm - (fghi * 10000U);
 				*buf					= char_table_1_digit_data[a];
 				std::memcpy(buf + 1, char_table_4_digit_data + bcde, 4ULL);

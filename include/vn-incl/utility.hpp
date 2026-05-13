@@ -9,168 +9,13 @@
 
 namespace vn {
 
-	struct VN_ALIGN(64) coeff_holder {
-		VN_ALIGN(64) uint32_t values[4]{};
-	};
-
-	VN_ALIGN(64) static constexpr coeff_holder coeff_table[16] = {
-		coeff_holder{ 0, 0, 0, 0 },
-		coeff_holder{ 0, 0, 0, 1 },
-		coeff_holder{ 0, 0, 1, 10 },
-		coeff_holder{ 0, 1, 10, 100 },
-		coeff_holder{ 1, 10, 100, 1000 },
-	};
-
 	namespace detail {
-
-		template<auto value_new> struct make_static {
-			static constexpr auto value{ value_new };
-		};
 
 		template<uint8_types auto repeat, uint_types v_type> static constexpr uint64_t repeat_bytes_v = static_cast<v_type>(0x0101010101010101ull) * static_cast<v_type>(repeat);
 
-		template<typename value_type> VN_FORCE_INLINE constexpr value_type lzcnt_constexpr(value_type value) noexcept {
-			if (value == 0)
-				return static_cast<value_type>(sizeof(value_type) * 8);
-
-			value_type count	= 0;
-			value_type msb_mask = static_cast<value_type>(static_cast<value_type>(1) << ((sizeof(value_type) * 8) - 1));
-
-			while ((value & msb_mask) == 0) {
-				value <<= 1;
-				++count;
-			}
-			return count;
-		}
-
-		template<uint16_types value_type> VN_FORCE_INLINE constexpr value_type lzcnt(const value_type value) noexcept {
-#if VN_COMPILER_MSVC
-	#if VN_ARCH_ARM64
-			unsigned int leading_zero = 0;
-			if (_BitScanReverse32(&leading_zero, value)) {
-				return 15 - static_cast<value_type>(leading_zero);
-			} else {
-				return 16;
-			}
-	#else
-			return static_cast<value_type>(_lzcnt_u32(value) - 16);
-	#endif
-#elif VN_COMPILER_CLANG || VN_COMPILER_GNU
-			return (value == 0) ? 16 : static_cast<value_type>(__builtin_clz(static_cast<unsigned int>(value))) - 16;
-#else
-			return lzcnt_constexpr(value);
-#endif
-		}
-
-		template<uint32_types value_type> VN_FORCE_INLINE constexpr value_type lzcnt(const value_type value) noexcept {
-#if VN_COMPILER_MSVC
-	#if VN_ARCH_ARM64
-			unsigned int leading_zero = 0;
-			if (_BitScanReverse32(&leading_zero, value)) {
-				return 31 - static_cast<value_type>(leading_zero);
-			} else {
-				return 32;
-			}
-	#else
-			return _lzcnt_u32(value);
-	#endif
-#elif VN_COMPILER_CLANG || VN_COMPILER_GNU
-			return (value == 0) ? 32 : static_cast<value_type>(__builtin_clz(static_cast<unsigned int>(value)));
-#else
-			return lzcnt_constexpr(value);
-#endif
-		}
-
-		template<uint64_types value_type> VN_FORCE_INLINE constexpr value_type lzcnt(const value_type value) noexcept {
-#if VN_COMPILER_MSVC
-	#if VN_ARCH_ARM64
-			unsigned long leading_zero = 0;
-			if (_BitScanReverse64(&leading_zero, value)) {
-				return 63 - static_cast<value_type>(leading_zero);
-			} else {
-				return 64;
-			}
-	#else
-			return _lzcnt_u64(value);
-	#endif
-#elif VN_COMPILER_CLANG || VN_COMPILER_GNU
-			return (value == 0) ? 64 : static_cast<value_type>(__builtin_clzll(static_cast<uint64_t>(value)));
-#else
-			return lzcnt_constexpr(value);
-#endif
-		}
-
-		template<uint_types v_type> VN_FORCE_INLINE constexpr v_type tzcnt_constexpr(const v_type value) noexcept {
-			if (value == 0)
-				return static_cast<v_type>(sizeof(v_type) * 8);
-
-			v_type count = 0;
-			while ((value & 1) == 0) {
-				value >>= 1;
-				++count;
-			}
-			return count;
-		}
-
-		template<uint16_types v_type> VN_FORCE_INLINE constexpr v_type tzcnt(const v_type value) noexcept {
-#if VN_COMPILER_MSVC
-	#if VN_ARCH_ARM64
-			uint64_t trailing_zero = 0;
-			if (_BitScanForward(&trailing_zero, static_cast<uint64_t>(value))) {
-				return static_cast<v_type>(trailing_zero);
-			} else {
-				return 16;
-			}
-	#else
-			return static_cast<v_type>(_tzcnt_u16(value));
-	#endif
-#elif VN_COMPILER_CLANG || VN_COMPILER_GNU
-			return (value == 0) ? 16 : static_cast<v_type>(__builtin_ctz(static_cast<uint32_t>(value)));
-#else
-			return tzcnt_constexpr(value);
-#endif
-		}
-
-		template<uint32_types v_type> VN_FORCE_INLINE constexpr v_type tzcnt(const v_type value) noexcept {
-#if VN_COMPILER_MSVC
-	#if VN_ARCH_ARM64
-			uint64_t trailing_zero = 0;
-			if (_BitScanForward(&trailing_zero, static_cast<uint64_t>(value))) {
-				return static_cast<v_type>(trailing_zero);
-			} else {
-				return 32;
-			}
-	#else
-			return static_cast<v_type>(_tzcnt_u32(value));
-	#endif
-#elif VN_COMPILER_CLANG || VN_COMPILER_GNU
-			return (value == 0) ? 32 : static_cast<v_type>(__builtin_ctz(static_cast<uint32_t>(value)));
-#else
-			return tzcnt_constexpr(value);
-#endif
-		}
-
-		template<uint64_types v_type> VN_FORCE_INLINE constexpr v_type tzcnt(const v_type value) noexcept {
-#if VN_COMPILER_MSVC
-	#if VN_ARCH_ARM64
-			uint64_t trailing_zero = 0;
-			if (_BitScanForward64(&trailing_zero, static_cast<uint32_t __int64>(value))) {
-				return static_cast<v_type>(trailing_zero);
-			} else {
-				return 64;
-			}
-	#else
-			return static_cast<v_type>(_tzcnt_u64(value));
-	#endif
-#elif VN_COMPILER_CLANG || VN_COMPILER_GNU
-			return (value == 0) ? 64 : static_cast<v_type>(__builtin_ctzll(static_cast<uint64_t>(value)));
-#else
-			return tzcnt_constexpr(value);
-#endif
-		}
 		template<typename v_type> VN_ALIGN(64) static constexpr const std::make_unsigned_t<v_type>* __restrict raw_comp_vals_pos{ [] {
-			VN_ALIGN(64) constexpr std::array<std::make_unsigned_t<v_type>, 256> return_values{ [] {
-				constexpr auto max_value{ static_cast<std::make_unsigned_t<v_type>>(std::numeric_limits<std::decay_t<v_type>>::max()) };
+			VN_ALIGN(64) static constexpr std::array<std::make_unsigned_t<v_type>, 256> return_values{ [] {
+				static constexpr auto max_value{ static_cast<std::make_unsigned_t<v_type>>(std::numeric_limits<std::decay_t<v_type>>::max()) };
 				std::array<std::make_unsigned_t<v_type>, 256> return_values_internal{};
 				return_values_internal['0'] = (max_value - 0) / 10;
 				return_values_internal['1'] = (max_value - 1) / 10;
@@ -184,12 +29,12 @@ namespace vn {
 				return_values_internal['9'] = (max_value - 9) / 10;
 				return return_values_internal;
 			}() };
-			return make_static<return_values>::value.data();
+			return return_values.data();
 		}() };
 
 		template<typename v_type> VN_ALIGN(64) static constexpr const std::make_unsigned_t<v_type>* __restrict raw_comp_vals_neg{ [] {
-			VN_ALIGN(64) constexpr std::array<std::make_unsigned_t<v_type>, 256> return_values{ [] {
-				constexpr auto max_value{ static_cast<std::make_unsigned_t<v_type>>(std::numeric_limits<std::make_signed_t<v_type>>::max()) + 1 };
+			VN_ALIGN(64) static constexpr std::array<std::make_unsigned_t<v_type>, 256> return_values{ [] {
+				static constexpr auto max_value{ static_cast<std::make_unsigned_t<v_type>>(std::numeric_limits<std::make_signed_t<v_type>>::max()) + 1 };
 				std::array<std::make_unsigned_t<v_type>, 256> return_values_interna{};
 				return_values_interna['0'] = (max_value - 0) / 10;
 				return_values_interna['1'] = (max_value - 1) / 10;
@@ -203,7 +48,7 @@ namespace vn {
 				return_values_interna['9'] = (max_value - 9) / 10;
 				return return_values_interna;
 			}() };
-			return make_static<return_values>::value.data();
+			return return_values.data();
 		}() };
 
 		template<uint8_types v_type> VN_FORCE_INLINE static constexpr bool is_digit(v_type c) noexcept {
@@ -216,14 +61,14 @@ namespace vn {
 
 		template<std::endian endianity, typename v_type> struct int_tables_impl<endianity, 1, v_type> {
 			VN_ALIGN(64) static constexpr const char* __restrict values{ [] {
-				VN_ALIGN(64) constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<char, 10> t{};
 					for (uint32_t i = 0; i < 10; ++i) {
 						t[i] = static_cast<char>('0' + i);
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -240,7 +85,7 @@ namespace vn {
 
 		template<typename v_type> struct int_tables_impl<std::endian::little, 2, v_type> {
 			VN_ALIGN(64) static constexpr const uint16_t* __restrict values{ [] {
-				VN_ALIGN(64) constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<uint16_t, 100> t{};
 					for (uint32_t i = 0; i < 100; ++i) {
 						t[i] |= static_cast<uint16_t>('0' + (i / 10));
@@ -248,13 +93,13 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
 		template<typename v_type> struct int_tables_impl<std::endian::little, 3, v_type> {
 			VN_ALIGN(64) static constexpr const char_array<3>* __restrict values{ [] {
-				VN_ALIGN(64) constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<char_array<3>, 1000> t{};
 					for (uint32_t i = 0; i < 1000; ++i) {
 						t[i][0] = static_cast<char>('0' + (i / 100));
@@ -263,13 +108,13 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
 		template<typename v_type> struct int_tables_impl<std::endian::little, 4, v_type> {
 			VN_ALIGN(64) static constexpr const uint32_t* __restrict values{ [] {
-				VN_ALIGN(64) constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<uint32_t, 10000> t{};
 					for (uint32_t i = 0; i < 10000; ++i) {
 						t[i] |= static_cast<uint32_t>('0' + (i / 1000));
@@ -279,13 +124,13 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
 		template<typename v_type> struct int_tables_impl<std::endian::big, 2, v_type> {
 			VN_ALIGN(64) static constexpr const uint16_t* __restrict values{ [] {
-				VN_ALIGN(64) constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<uint16_t, 100> t{};
 					for (uint32_t i = 0; i < 100; ++i) {
 						t[i] |= static_cast<uint16_t>('0' + (i / 10)) << 8;
@@ -293,13 +138,13 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
 		template<typename v_type> struct int_tables_impl<std::endian::big, 3, v_type> {
 			VN_ALIGN(64) static constexpr const char_array<3>* __restrict values{ [] {
-				VN_ALIGN(64) constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<char_array<3>, 1000> t{};
 					for (uint32_t i = 0; i < 1000; ++i) {
 						t[i][2] = static_cast<char>('0' + (i / 100));
@@ -308,13 +153,13 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
 		template<typename v_type> struct int_tables_impl<std::endian::big, 4, v_type> {
 			VN_ALIGN(64) static constexpr const uint32_t* __restrict values{ [] {
-				VN_ALIGN(64) constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<uint32_t, 10000> t{};
 					for (uint32_t i = 0; i < 10000; ++i) {
 						t[i] |= static_cast<uint32_t>('0' + (i / 1000)) << 24;
@@ -324,7 +169,7 @@ namespace vn {
 					}
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
@@ -383,7 +228,7 @@ namespace vn {
 
 		template<uint16_types v_type> struct mul_shift_table<v_type> {
 			VN_ALIGN(64) static constexpr const mul_shift_entry<v_type>* __restrict values{ [] {
-				VN_ALIGN(64) constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<mul_shift_entry<v_type>, 5> t{ {
 						{ 0x999a, 0x18 },
 						{ 0x8f5d, 0x18 },
@@ -393,13 +238,13 @@ namespace vn {
 					} };
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
 		template<uint32_types v_type> struct mul_shift_table<v_type> {
 			VN_ALIGN(64) static constexpr const mul_shift_entry<v_type>* __restrict values{ [] {
-				VN_ALIGN(64) constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<mul_shift_entry<v_type>, 8> t{ {
 						{ 0xcccccccdU, 35 },
 						{ 0xa3d70a3eU, 38 },
@@ -412,13 +257,13 @@ namespace vn {
 					} };
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 
 		template<uint64_types v_type> struct mul_shift_table<v_type> {
 			VN_ALIGN(64) static constexpr const mul_shift_entry<v_type>* __restrict values{ [] {
-				VN_ALIGN(64) constexpr auto table{ [] {
+				VN_ALIGN(64) static constexpr auto table{ [] {
 					std::array<mul_shift_entry<v_type>, 16> t{
 						mul_shift_entry<v_type>{ 0xcccccccccccccccd, 67 },
 						{ 0xa3d70a3d70a3d70b, 70 },
@@ -439,7 +284,7 @@ namespace vn {
 					};
 					return t;
 				}() };
-				return make_static<table>::value.data();
+				return table.data();
 			}() };
 		};
 

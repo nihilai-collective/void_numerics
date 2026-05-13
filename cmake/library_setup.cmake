@@ -120,6 +120,5 @@ target_compile_definitions(${PROJECT_NAME}
         $<$<CONFIG:Debug>:DEBUG _DEBUG>
         $<$<BOOL:${VN_ASAN}>:VN_ASAN_ENABLED>
         $<$<BOOL:${VN_UBSAN}>:VN_UBSAN_ENABLED>
-        $<$<CONFIG:Debug>:VN_DEBUG=1>
-        $<$<NOT:$<CONFIG:Debug>>:VN_DEBUG=0>
+        $<IF:$<CONFIG:Debug>,VN_DEBUG=1,VN_DEBUG=0>
 )

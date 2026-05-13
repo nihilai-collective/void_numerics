@@ -154,10 +154,8 @@ namespace to_chars_llvm_tests {
 	};
 
 	TEST_CONSTEXPR_CXX23 static bool test() {
-		std::cout << "Running LLVM to_chars tests" << std::endl;
 		run<test_basics>(integrals);
 		run<test_signed>(all_signed);
-		std::cout << "LLVM to_chars tests complete" << std::endl;
 		return true;
 	}
 

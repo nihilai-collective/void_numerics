@@ -11,10 +11,10 @@
 // XFAIL: availability-fp_from_chars-missing
 
 // from_chars_result from_chars(const char* first, const char* last,
-//                              float& value, chars_format fmt = chars_format::general)
+//                              float& value, chars_format fmt = std::chars_format::general)
 //
 // from_chars_result from_chars(const char* first, const char* last,
-//                              double& value, chars_format fmt = chars_format::general)
+//                              double& value, chars_format fmt = std::chars_format::general)
 // unit-tests/llvm_floating_point_pass.hpp
 
 #pragma once
@@ -33,7 +33,7 @@
 namespace floating_point_pass_llvm_tests {
 
 	template<vn::detail::float_types v_type> bool operator==(const v_type lhs, const v_type rhs) {
-		return true;
+		return lhs == rhs;
 	}
 
 	template<class F> void test_infinity(std::chars_format fmt) {

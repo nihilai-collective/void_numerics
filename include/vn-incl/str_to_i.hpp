@@ -11,23 +11,23 @@ namespace vn {
 
 	namespace detail {
 
-		template<uint64_t byte_count> struct first_non_zero_byte;
+		template<uint64_types auto byte_count> struct first_non_zero_byte;
 
 		template<uint_types v_type> VN_FORCE_INLINE v_type count_zeros(v_type value) noexcept {
 			if constexpr (std::endian::native == std::endian::little) {
-				return tzcnt(value);
+				return static_cast<v_type>(std::countr_zero(value));
 			} else {
-				return lzcnt(value);
+				return static_cast<v_type>(std::countl_zero(value));
 			}
 		}
 
-		template<> struct first_non_zero_byte<1> {
+		template<> struct first_non_zero_byte<1ULL> {
 			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
 				return *str == '0';
 			}
 		};
 
-		template<> struct first_non_zero_byte<2> {
+		template<> struct first_non_zero_byte<2ULL> {
 			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
 				uint16_t chunk;
 				std::memcpy(&chunk, str, 2);
@@ -36,7 +36,7 @@ namespace vn {
 			}
 		};
 
-		template<> struct first_non_zero_byte<3> {
+		template<> struct first_non_zero_byte<3ULL> {
 			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
 				uint32_t chunk;
 				std::memcpy(&chunk, str, 3);
@@ -46,7 +46,7 @@ namespace vn {
 			}
 		};
 
-		template<> struct first_non_zero_byte<4> {
+		template<> struct first_non_zero_byte<4ULL> {
 			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
 				uint32_t chunk;
 				std::memcpy(&chunk, str, 4);
@@ -55,7 +55,7 @@ namespace vn {
 			}
 		};
 
-		template<> struct first_non_zero_byte<5> {
+		template<> struct first_non_zero_byte<5ULL> {
 			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 5);
@@ -64,7 +64,7 @@ namespace vn {
 			}
 		};
 
-		template<> struct first_non_zero_byte<6> {
+		template<> struct first_non_zero_byte<6ULL> {
 			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 6);
@@ -73,7 +73,7 @@ namespace vn {
 			}
 		};
 
-		template<> struct first_non_zero_byte<7> {
+		template<> struct first_non_zero_byte<7ULL> {
 			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 7);
@@ -82,7 +82,7 @@ namespace vn {
 			}
 		};
 
-		template<> struct first_non_zero_byte<8> {
+		template<> struct first_non_zero_byte<8ULL> {
 			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 8);
@@ -101,46 +101,46 @@ namespace vn {
 			uint64_t length{ static_cast<uint64_t>(end - iter) };
 			switch (length) {
 				case 1: {
-					iter += first_non_zero_byte<1>::impl(iter);
+					iter += first_non_zero_byte<1ULL>::impl(iter);
 					return iter;
 				}
 				case 2: {
-					iter += first_non_zero_byte<2>::impl(iter);
+					iter += first_non_zero_byte<2ULL>::impl(iter);
 					return iter;
 				}
 				case 3: {
-					iter += first_non_zero_byte<3>::impl(iter);
+					iter += first_non_zero_byte<3ULL>::impl(iter);
 					return iter;
 				}
 				case 4: {
-					iter += first_non_zero_byte<4>::impl(iter);
+					iter += first_non_zero_byte<4ULL>::impl(iter);
 					return iter;
 				}
 				case 5: {
-					iter += first_non_zero_byte<5>::impl(iter);
+					iter += first_non_zero_byte<5ULL>::impl(iter);
 					return iter;
 				}
 				case 6: {
-					iter += first_non_zero_byte<6>::impl(iter);
+					iter += first_non_zero_byte<6ULL>::impl(iter);
 					return iter;
 				}
 				case 7: {
-					iter += first_non_zero_byte<7>::impl(iter);
+					iter += first_non_zero_byte<7ULL>::impl(iter);
 					return iter;
 				}
 				case 8: {
-					iter += first_non_zero_byte<8>::impl(iter);
+					iter += first_non_zero_byte<8ULL>::impl(iter);
 					return iter;
 				}
 				default: {
 					while (iter + 8 < end && *iter == zero) {
-						iter += first_non_zero_byte<8>::impl(iter);
+						iter += first_non_zero_byte<8ULL>::impl(iter);
 					}
 					if (iter + 4 < end && *iter == zero) {
-						iter += first_non_zero_byte<4>::impl(iter);
+						iter += first_non_zero_byte<4ULL>::impl(iter);
 					}
 					if (iter + 2 < end && *iter == zero) {
-						iter += first_non_zero_byte<2>::impl(iter);
+						iter += first_non_zero_byte<2ULL>::impl(iter);
 					}
 					if (iter < end && *iter == zero) {
 						++iter;
@@ -151,11 +151,11 @@ namespace vn {
 		}
 
 		template<bool negative, integer_types v_type>
-		VN_FORCE_INLINE static const char* __restrict parse_integer(v_type& value_new, const char* __restrict iter, const char* __restrict end) noexcept {
+		VN_FORCE_INLINE static const char* parse_integer(v_type& value_new, const char* __restrict iter, const char* __restrict end) noexcept {
 			using v_type_local					  = std::make_unsigned_t<v_type>;
 			VN_ALIGN(64) static constexpr v_type_local zero_val{ 0 };
 
-			if (iter >= end) [[unlikely]] {
+			if VN_UNLIKELY (iter >= end) {
 				return iter;
 			}
 
@@ -531,19 +531,19 @@ namespace vn {
 				}
 				return iter;
 			}
-
-			if (iter < end && vn_is_digit(static_cast<uint8_t>(*iter))) {
-				while (++iter < end && vn_is_digit(static_cast<uint8_t>(*iter))) {
+			if VN_LIKELY (iter == end) {
+				if constexpr (negative) {
+					value_new = static_cast<v_type>(zero_val - value);
+				} else {
+					value_new = static_cast<v_type>(value);
+				}
+				return iter;
+			} else {
+				while (iter < end && vn_is_digit(static_cast<uint8_t>(*iter))) {
+					++iter;
 				}
 				return iter;
 			}
-
-			if constexpr (negative) {
-				value_new = static_cast<v_type>(zero_val - value);
-			} else {
-				value_new = static_cast<v_type>(value);
-			}
-			return iter;
 		}
 
 		template<int_types v_type> struct from_chars_impl<v_type> {

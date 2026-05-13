@@ -47,14 +47,6 @@
 	#define VN_PLATFORM_MACOS 0
 #endif
 
-#ifndef VN_DEBUG
-	#if defined(_DEBUG) || (defined(NDEBUG) == 0) || defined(DEBUG)
-		#define VN_DEBUG 1
-	#else
-		#define VN_DEBUG 0
-	#endif
-#endif
-
 #define VN_ALIGN(x) alignas(x)
 
 #if VN_DEBUG

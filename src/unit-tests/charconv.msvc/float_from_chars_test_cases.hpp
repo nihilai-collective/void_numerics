@@ -11,37 +11,37 @@
 using namespace std;
 
 inline constexpr FloatFromCharsTestCase float_from_chars_test_cases[] = {
-    {"1.a0000400", chars_format::hex, 10, errc{}, 0x1.a00004p0f}, // exact
-    {"1.a0000401", chars_format::hex, 10, errc{}, 0x1.a00004p0f}, // below midpoint, round down
-    {"1.a0000500", chars_format::hex, 10, errc{}, 0x1.a00004p0f}, // midpoint, round down to even
-    {"1.a0000501", chars_format::hex, 10, errc{}, 0x1.a00006p0f}, // above midpoint, round up
-    {"1.a0000600", chars_format::hex, 10, errc{}, 0x1.a00006p0f}, // exact
-    {"1.a0000601", chars_format::hex, 10, errc{}, 0x1.a00006p0f}, // below midpoint, round down
-    {"1.a0000700", chars_format::hex, 10, errc{}, 0x1.a00008p0f}, // midpoint, round up to even
-    {"1.a0000701", chars_format::hex, 10, errc{}, 0x1.a00008p0f}, // above midpoint, round up
+    {"1.a0000400", std::chars_format::hex, 10, errc{}, 0x1.a00004p0f}, // exact
+    {"1.a0000401", std::chars_format::hex, 10, errc{}, 0x1.a00004p0f}, // below midpoint, round down
+    {"1.a0000500", std::chars_format::hex, 10, errc{}, 0x1.a00004p0f}, // midpoint, round down to even
+    {"1.a0000501", std::chars_format::hex, 10, errc{}, 0x1.a00006p0f}, // above midpoint, round up
+    {"1.a0000600", std::chars_format::hex, 10, errc{}, 0x1.a00006p0f}, // exact
+    {"1.a0000601", std::chars_format::hex, 10, errc{}, 0x1.a00006p0f}, // below midpoint, round down
+    {"1.a0000700", std::chars_format::hex, 10, errc{}, 0x1.a00008p0f}, // midpoint, round up to even
+    {"1.a0000701", std::chars_format::hex, 10, errc{}, 0x1.a00008p0f}, // above midpoint, round up
 
-    {"1.0000040", chars_format::hex, 9, errc{}, 0x1.000004p0f}, // exact
-    {"1.0000041", chars_format::hex, 9, errc{}, 0x1.000004p0f}, // below midpoint, round down
-    {"1.0000050", chars_format::hex, 9, errc{}, 0x1.000004p0f}, // midpoint, round down to even
-    {"1.0000051", chars_format::hex, 9, errc{}, 0x1.000006p0f}, // above midpoint, round up
-    {"1.0000060", chars_format::hex, 9, errc{}, 0x1.000006p0f}, // exact
-    {"1.0000061", chars_format::hex, 9, errc{}, 0x1.000006p0f}, // below midpoint, round down
-    {"1.0000070", chars_format::hex, 9, errc{}, 0x1.000008p0f}, // midpoint, round up to even
-    {"1.0000071", chars_format::hex, 9, errc{}, 0x1.000008p0f}, // above midpoint, round up
+    {"1.0000040", std::chars_format::hex, 9, errc{}, 0x1.000004p0f}, // exact
+    {"1.0000041", std::chars_format::hex, 9, errc{}, 0x1.000004p0f}, // below midpoint, round down
+    {"1.0000050", std::chars_format::hex, 9, errc{}, 0x1.000004p0f}, // midpoint, round down to even
+    {"1.0000051", std::chars_format::hex, 9, errc{}, 0x1.000006p0f}, // above midpoint, round up
+    {"1.0000060", std::chars_format::hex, 9, errc{}, 0x1.000006p0f}, // exact
+    {"1.0000061", std::chars_format::hex, 9, errc{}, 0x1.000006p0f}, // below midpoint, round down
+    {"1.0000070", std::chars_format::hex, 9, errc{}, 0x1.000008p0f}, // midpoint, round up to even
+    {"1.0000071", std::chars_format::hex, 9, errc{}, 0x1.000008p0f}, // above midpoint, round up
 
-    {"1.0000002384185791015625000000", chars_format::general, 30, errc{}, 0x1.000004p0f}, // exact
-    {"1.0000002421438694000244140625", chars_format::general, 30, errc{}, 0x1.000004p0f}, // below midpoint, round down
-    {"1.0000002980232238769531249999", chars_format::general, 30, errc{}, 0x1.000004p0f}, // below midpoint, round down
-    {"1.0000002980232238769531250000", chars_format::general, 30, errc{},
+    {"1.0000002384185791015625000000", std::chars_format::general, 30, errc{}, 0x1.000004p0f}, // exact
+    {"1.0000002421438694000244140625", std::chars_format::general, 30, errc{}, 0x1.000004p0f}, // below midpoint, round down
+    {"1.0000002980232238769531249999", std::chars_format::general, 30, errc{}, 0x1.000004p0f}, // below midpoint, round down
+    {"1.0000002980232238769531250000", std::chars_format::general, 30, errc{},
         0x1.000004p0f}, // midpoint, round down to even
-    {"1.0000002980232238769531250001", chars_format::general, 30, errc{}, 0x1.000006p0f}, // above midpoint, round up
-    {"1.0000003017485141754150390625", chars_format::general, 30, errc{}, 0x1.000006p0f}, // above midpoint, round up
-    {"1.0000003576278686523437500000", chars_format::general, 30, errc{}, 0x1.000006p0f}, // exact
-    {"1.0000003613531589508056640625", chars_format::general, 30, errc{}, 0x1.000006p0f}, // below midpoint, round down
-    {"1.0000004172325134277343749999", chars_format::general, 30, errc{}, 0x1.000006p0f}, // below midpoint, round down
-    {"1.0000004172325134277343750000", chars_format::general, 30, errc{}, 0x1.000008p0f}, // midpoint, round up to even
-    {"1.0000004172325134277343750001", chars_format::general, 30, errc{}, 0x1.000008p0f}, // above midpoint, round up
-    {"1.0000004209578037261962890625", chars_format::general, 30, errc{}, 0x1.000008p0f}, // above midpoint, round up
+    {"1.0000002980232238769531250001", std::chars_format::general, 30, errc{}, 0x1.000006p0f}, // above midpoint, round up
+    {"1.0000003017485141754150390625", std::chars_format::general, 30, errc{}, 0x1.000006p0f}, // above midpoint, round up
+    {"1.0000003576278686523437500000", std::chars_format::general, 30, errc{}, 0x1.000006p0f}, // exact
+    {"1.0000003613531589508056640625", std::chars_format::general, 30, errc{}, 0x1.000006p0f}, // below midpoint, round down
+    {"1.0000004172325134277343749999", std::chars_format::general, 30, errc{}, 0x1.000006p0f}, // below midpoint, round down
+    {"1.0000004172325134277343750000", std::chars_format::general, 30, errc{}, 0x1.000008p0f}, // midpoint, round up to even
+    {"1.0000004172325134277343750001", std::chars_format::general, 30, errc{}, 0x1.000008p0f}, // above midpoint, round up
+    {"1.0000004209578037261962890625", std::chars_format::general, 30, errc{}, 0x1.000008p0f}, // above midpoint, round up
 
     // VSO-838635 "<charconv>: from_chars() mishandles certain subnormals"
     // This bug didn't actually affect float, but we should have similar test cases.
@@ -61,7 +61,7 @@ inline constexpr FloatFromCharsTestCase float_from_chars_test_cases[] = {
      "6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666"
      "6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666"
      "6666666666666666666e-46",
-        chars_format::scientific, 1006, errc::result_out_of_range, 0x0.000000p+0f},
+        std::chars_format::scientific, 1006, errc::result_out_of_range, 0x0.000000p+0f},
     {"7."
      "7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
      "7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
@@ -73,7 +73,7 @@ inline constexpr FloatFromCharsTestCase float_from_chars_test_cases[] = {
      "7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
      "7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777"
      "7777777777777777777e-46",
-        chars_format::scientific, 1006, errc{}, 0x0.000002p-126f},
+        std::chars_format::scientific, 1006, errc{}, 0x0.000002p-126f},
     {"8."
      "8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888"
      "8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888"
@@ -85,7 +85,7 @@ inline constexpr FloatFromCharsTestCase float_from_chars_test_cases[] = {
      "8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888"
      "8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888"
      "8888888888888888888e-46",
-        chars_format::scientific, 1006, errc{}, 0x0.000002p-126f},
+        std::chars_format::scientific, 1006, errc{}, 0x0.000002p-126f},
     {"9."
      "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
      "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
@@ -97,7 +97,7 @@ inline constexpr FloatFromCharsTestCase float_from_chars_test_cases[] = {
      "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
      "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
      "9999999999999999999e-46",
-        chars_format::scientific, 1006, errc{}, 0x0.000002p-126f},
+        std::chars_format::scientific, 1006, errc{}, 0x0.000002p-126f},
     {"1."
      "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
      "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
@@ -109,7 +109,7 @@ inline constexpr FloatFromCharsTestCase float_from_chars_test_cases[] = {
      "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
      "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
      "1111111111111111111e-45",
-        chars_format::scientific, 1006, errc{}, 0x0.000002p-126f},
+        std::chars_format::scientific, 1006, errc{}, 0x0.000002p-126f},
     {"2."
      "2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222"
      "2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222"
@@ -121,20 +121,20 @@ inline constexpr FloatFromCharsTestCase float_from_chars_test_cases[] = {
      "2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222"
      "2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222"
      "2222222222222222222e-45",
-        chars_format::scientific, 1006, errc{}, 0x0.000004p-126f},
+        std::chars_format::scientific, 1006, errc{}, 0x0.000004p-126f},
 
     // VSO-733765 "<charconv>: [Feedback] double std::from_chars behavior on exponent out of range"
     // LWG-3081 "Floating point from_chars API does not distinguish between overflow and underflow"
     // These test cases exercise every overflow/underflow codepath.
-    {"1e+1000", chars_format::scientific, 7, errc::result_out_of_range, float_inf},
-    {"1e-1000", chars_format::scientific, 7, errc::result_out_of_range, 0.0f},
-    {"1.ffffffp+127", chars_format::hex, 13, errc::result_out_of_range, float_inf},
-    {"1e+2000", chars_format::scientific, 7, errc::result_out_of_range, float_inf},
-    {"1e-2000", chars_format::scientific, 7, errc::result_out_of_range, 0.0f},
-    {"1e+9999", chars_format::scientific, 7, errc::result_out_of_range, float_inf},
-    {"1e-9999", chars_format::scientific, 7, errc::result_out_of_range, 0.0f},
-    {"10e+5199", chars_format::scientific, 8, errc::result_out_of_range, float_inf},
-    {"0.001e-5199", chars_format::scientific, 11, errc::result_out_of_range, 0.0f},
+    {"1e+1000", std::chars_format::scientific, 7, errc::result_out_of_range, float_inf},
+    {"1e-1000", std::chars_format::scientific, 7, errc::result_out_of_range, 0.0f},
+    {"1.ffffffp+127", std::chars_format::hex, 13, errc::result_out_of_range, float_inf},
+    {"1e+2000", std::chars_format::scientific, 7, errc::result_out_of_range, float_inf},
+    {"1e-2000", std::chars_format::scientific, 7, errc::result_out_of_range, 0.0f},
+    {"1e+9999", std::chars_format::scientific, 7, errc::result_out_of_range, float_inf},
+    {"1e-9999", std::chars_format::scientific, 7, errc::result_out_of_range, 0.0f},
+    {"10e+5199", std::chars_format::scientific, 8, errc::result_out_of_range, float_inf},
+    {"0.001e-5199", std::chars_format::scientific, 11, errc::result_out_of_range, 0.0f},
 };
 
 #endif // FLOAT_FROM_CHARS_TEST_CASES_HPP
