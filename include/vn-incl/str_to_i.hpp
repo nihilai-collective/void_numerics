@@ -5,7 +5,6 @@
 #pragma once
 
 #include <vn-incl/utility.hpp>
-#include <iostream>
 
 namespace vn {
 
@@ -22,13 +21,13 @@ namespace vn {
 		}
 
 		template<> struct first_non_zero_byte<1ULL> {
-			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
+			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) noexcept {
 				return *str == '0';
 			}
 		};
 
 		template<> struct first_non_zero_byte<2ULL> {
-			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
+			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) noexcept {
 				uint16_t chunk;
 				std::memcpy(&chunk, str, 2);
 				uint16_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), uint16_t>;
@@ -37,7 +36,7 @@ namespace vn {
 		};
 
 		template<> struct first_non_zero_byte<3ULL> {
-			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
+			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) noexcept {
 				uint32_t chunk;
 				std::memcpy(&chunk, str, 3);
 				uint32_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), uint32_t>;
@@ -47,7 +46,7 @@ namespace vn {
 		};
 
 		template<> struct first_non_zero_byte<4ULL> {
-			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
+			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) noexcept {
 				uint32_t chunk;
 				std::memcpy(&chunk, str, 4);
 				uint32_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), uint32_t>;
@@ -56,7 +55,7 @@ namespace vn {
 		};
 
 		template<> struct first_non_zero_byte<5ULL> {
-			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
+			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) noexcept {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 5);
 				uint64_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), uint64_t>;
@@ -65,7 +64,7 @@ namespace vn {
 		};
 
 		template<> struct first_non_zero_byte<6ULL> {
-			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
+			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) noexcept {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 6);
 				uint64_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), uint64_t>;
@@ -74,7 +73,7 @@ namespace vn {
 		};
 
 		template<> struct first_non_zero_byte<7ULL> {
-			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
+			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) noexcept {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 7);
 				uint64_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), uint64_t>;
@@ -83,7 +82,7 @@ namespace vn {
 		};
 
 		template<> struct first_non_zero_byte<8ULL> {
-			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) {
+			VN_FORCE_INLINE static uint64_t impl(const char* __restrict str) noexcept {
 				uint64_t chunk;
 				std::memcpy(&chunk, str, 8);
 				uint64_t diff = chunk ^ repeat_bytes_v<static_cast<uint8_t>(0x30), uint64_t>;
@@ -93,11 +92,11 @@ namespace vn {
 
 		template<typename v_type> struct from_chars_impl;
 
-		template<uint_types v_type> VN_FORCE_INLINE bool vn_is_digit(v_type value) {
+		template<uint_types v_type> VN_FORCE_INLINE bool vn_is_digit(v_type value) noexcept {
 			return ((static_cast<uint8_t>(value - '0')) < 10);
 		}
 
-		VN_FORCE_INLINE static const char* trim_leading_zeros(const char* __restrict iter, const char* __restrict end) noexcept {
+		VN_FORCE_INLINE static const char* trim_leading_zeros(const char* __restrict iter VN_LIFETIME_BOUND, const char* __restrict end) noexcept {
 			uint64_t length{ static_cast<uint64_t>(end - iter) };
 			switch (length) {
 				case 1: {

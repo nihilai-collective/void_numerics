@@ -55,10 +55,9 @@ target_compile_options(${PROJECT_NAME}
             $<$<AND:$<CONFIG:Release>,$<NOT:$<BOOL:${VN_ASAN}>>>:
                 -O3
                 -march=native
+                -mtune=native
                 -flto
-                -finline-functions
                 -fomit-frame-pointer
-                -funroll-loops
                 -fno-rtti
             >
             $<$<AND:$<CONFIG:Debug>,$<BOOL:${VN_ASAN}>>:
@@ -118,7 +117,5 @@ target_compile_definitions(${PROJECT_NAME}
         VN_ARCH_X64=$<IF:$<OR:$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},AMD64>>,1,0>
         VN_EXTENSION=$<IF:$<OR:$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>,$<CXX_COMPILER_ID:AppleClang>>,__extension__,>
         $<$<CONFIG:Debug>:DEBUG _DEBUG>
-        $<$<BOOL:${VN_ASAN}>:VN_ASAN_ENABLED>
-        $<$<BOOL:${VN_UBSAN}>:VN_UBSAN_ENABLED>
         $<IF:$<CONFIG:Debug>,VN_DEBUG=1,VN_DEBUG=0>
 )

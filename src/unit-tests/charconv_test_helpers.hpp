@@ -68,7 +68,7 @@ template<typename X, typename v_type> constexpr bool fits_in(v_type v) {
 }
 
 template<typename X> struct to_chars_test_base {
-	template<typename v_type, std::size_t N, typename... Ts> TEST_CONSTEXPR_CXX23 void test(v_type v, char const (&expect)[N], Ts... args) {
+	template<typename v_type, std::size_t N, typename... Ts> TEST_CONSTEXPR_CXX23 void test(v_type v, [[maybe_unused]] char const (&expect)[N], Ts... args) {
 		std::to_chars_result r;
 
 		constexpr std::size_t len = N - 1;
@@ -93,9 +93,11 @@ template<typename X> struct to_chars_test_base {
 		assert(r.ec == std::errc{});
 		for (auto i = r.ptr - buf; i < static_cast<decltype(i)>(sizeof(buf)); ++i)
 			assert(static_cast<uint8_t>(buf[static_cast<uint64_t>(i)]) == i + 1);
-		*r.ptr = '\0';
+		if (r.ptr != nullptr) {
+			*r.ptr = '\0';
+		}
 		{
-			auto a = fromchars_impl(buf, r.ptr, args...);
+			[[maybe_unused]] auto a = fromchars_impl(buf, r.ptr, args...);
 			assert(v == a);
 		}
 
@@ -106,18 +108,16 @@ template<typename X> struct to_chars_test_base {
 
   private:
 	static TEST_CONSTEXPR_CXX23 long long fromchars_impl(char const* p, char const* ep, int32_t base, true_type) {
-		char* last;
 		long long r;
-		last = const_cast<char*>(vn::from_chars(p, ep, r, base).ptr);
+		[[maybe_unused]] char* last = const_cast<char*>(vn::from_chars(p, ep, r, base).ptr);
 		assert(last == ep);
 
 		return r;
 	}
 
 	static TEST_CONSTEXPR_CXX23 uint64_t fromchars_impl(char const* p, char const* ep, int32_t base, false_type) {
-		char* last;
 		uint64_t r;
-		last = const_cast<char*>(vn::from_chars(p, ep, r, base).ptr);
+		[[maybe_unused]] char* last = const_cast<char*>(vn::from_chars(p, ep, r, base).ptr);
 		assert(last == ep);
 
 		return r;

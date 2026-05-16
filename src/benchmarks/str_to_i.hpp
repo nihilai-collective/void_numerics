@@ -5,7 +5,6 @@
 
 #include <bnch_swt/index.hpp>
 #include <void-numerics>
-#include <absl/strings/numbers.h>
 #include "utility.hpp"
 #include <charconv>
 #include <cstring>
@@ -60,14 +59,6 @@ namespace str_to_i_tests {
 		}
 	};
 
-	struct absl_from_op {
-		template<typename v_type> VN_FORCE_INLINE static v_type convert(const char* buf, uint8_t len) noexcept {
-			v_type result{};
-			absl::SimpleAtoi(absl::string_view(buf, len), &result);
-			return result;
-		}
-	};
-
 	struct strto_op {
 		template<typename v_type> VN_FORCE_INLINE static v_type convert(const char* buf, uint8_t) noexcept {
 			if constexpr (vn::detail::int_types<v_type>) {
@@ -82,8 +73,8 @@ namespace str_to_i_tests {
 		template<typename size_type_01, typename size_type_02, typename vector_type, typename output_buffer_type, typename index_type> VN_FORCE_INLINE static uint64_t impl(
 			size_type_01 test_size, size_type_02 sub_iters, const vector_type& test_data, output_buffer_type& output_buffer, index_type& current_index) {
 			using out_type		  = typename output_buffer_type::value_type;
-			const auto* entries	  = test_data.data() + current_index * test_size;
-			out_type* const begin = output_buffer.data() + current_index * test_size;
+			const auto* entries	  = test_data.data() + current_index * test_size * sub_iters;
+			out_type* const begin = output_buffer.data() + current_index * test_size * sub_iters;
 			out_type* p			  = begin;
 			for (uint64_t y = 0; y < sub_iters; ++y) {
 				uint64_t base_index = y * test_size;

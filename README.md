@@ -1,4 +1,5 @@
 # void_numerics
+<p align="center"><img src="https://github.com/nihilai-collective/void_numerics/blob/main/logo.png?raw=true" width="150"/></p>
 
 **SWAR-optimized integer conversion for C++23.**
 
@@ -11,6 +12,10 @@
 The C++ standard library's `<charconv>` is already fast. `void_numerics` is faster — substantially so on hot integer-conversion paths — without sacrificing correctness, portability, or API compatibility.
 
 Every conversion is exhaustively unit-tested against `std::to_chars` / `std::from_chars` (including the LLVM libc++ test suite) and benchmarked against `std`, `jeaiii`, `fmt`, and `strtoll`/`strtoull` across 8-, 16-, 32-, and 64-bit signed and uint32_t integer types.
+
+---
+
+## [Benchmarks](https://github.com/nihilai-collective/void_numerics/blob/main/Benchmarks.md)
 
 ---
 

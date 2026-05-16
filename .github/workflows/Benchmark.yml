@@ -78,7 +78,7 @@ jobs:
         run: cmake -S . -B ./Build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=cl -DCMAKE_C_COMPILER=cl -DVN_BENCHMARKS=TRUE
 
       - name: Build
-        run: cmake --build ./Build --config=Release
+        run: cmake --build ./Build --config=Release -v
 
       - name: Install
         run: |

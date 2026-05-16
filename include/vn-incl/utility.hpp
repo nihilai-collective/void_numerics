@@ -5,15 +5,10 @@
 #pragma once
 
 #include <vn-incl/concepts.hpp>
-#include <limits>
 
 namespace vn {
 
 	namespace detail {
-
-		template<auto value_new> struct make_static {
-			static constexpr auto value{ value_new };
-		};
 
 		template<uint8_types auto repeat, uint_types v_type> static constexpr uint64_t repeat_bytes_v = static_cast<v_type>(0x0101010101010101ull) * static_cast<v_type>(repeat);
 
@@ -26,7 +21,7 @@ namespace vn {
 		}() };
 
 		template<typename v_type, bool negative> static constexpr std::array<std::make_unsigned_t<v_type>, 256> gen_raw_comp_vals() {
-			static constexpr auto max_value{ static_cast<std::make_unsigned_t<v_type>>(std::numeric_limits<base_t<v_type>>::max()) + comp_val_addition<negative> };
+			constexpr auto max_value{ static_cast<std::make_unsigned_t<v_type>>(std::numeric_limits<base_t<v_type>>::max()) + comp_val_addition<negative> };
 			std::array<std::make_unsigned_t<v_type>, 256> return_values_interna{};
 			return_values_interna['0'] = (max_value - 0) / 10;
 			return_values_interna['1'] = (max_value - 1) / 10;
@@ -66,11 +61,11 @@ namespace vn {
 		};
 
 		template<uint64_t size> struct char_array {
-			VN_FORCE_INLINE operator const char*() const {
+			VN_FORCE_INLINE operator const char*() const VN_LIFETIME_BOUND {
 				return values;
 			}
 
-			VN_FORCE_INLINE constexpr char& operator[](uint64_t index) noexcept {
+			VN_FORCE_INLINE constexpr char& operator[](uint64_t index) noexcept VN_LIFETIME_BOUND {
 				return values[index];
 			}
 			char values[size];
@@ -295,19 +290,10 @@ namespace vn {
 
 		template<typename v_type, uint64_t divisor> struct multiply_and_shift;
 
-		template<uint_types v_type, uint64_t divisor> struct multiply_and_shift<v_type, divisor> {
-			static constexpr auto entry = mul_shift_table<v_type>::values[divisor_to_index<divisor>()];
-			VN_FORCE_INLINE static v_type impl(v_type value) noexcept {
-				static constexpr v_type m	= entry.multiplicand;
-				static constexpr uint64_t s = entry.shift;
-				return static_cast<v_type>((static_cast<uint64_t>(value) * m) >> s);
-			}
-		};
-
 		template<uint64_types v_type, uint64_t divisor> struct multiply_and_shift<v_type, divisor> {
-			static constexpr auto entry = mul_shift_table<v_type>::values[divisor_to_index<divisor>()];
-			static constexpr v_type m	= entry.multiplicand;
-			static constexpr uint64_t s = entry.shift;
+			static constexpr const auto& entry = mul_shift_table<v_type>::table[divisor_to_index<divisor>()];
+			static constexpr const v_type& m   = entry.multiplicand;
+			static constexpr const uint64_t& s = entry.shift;
 			static_assert(s >= 64ULL);
 			VN_FORCE_INLINE static v_type impl(v_type value) noexcept {
 #if VN_COMPILER_CLANG || VN_COMPILER_GNU

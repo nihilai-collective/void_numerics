@@ -279,8 +279,8 @@ namespace i_to_str_tests {
 		template<typename size_type_01, typename size_type_02, typename vector_type, typename output_buffer_type, typename int_type> VN_FORCE_INLINE static uint64_t impl(
 			size_type_01 test_size, size_type_02 sub_iters, const vector_type& test_data, output_buffer_type& output_buffer, int_type& current_index) {
 			uint64_t total_bytes{};
-			const auto& values = test_data.data() + current_index * test_size;
-			char* const begin  = output_buffer.data() + current_index * test_size;
+			const auto& values = test_data.data() + current_index * test_size * sub_iters;
+			char* const begin  = output_buffer.data() + current_index * test_size * sub_iters;
 			char* p			   = begin;
 			for (uint64_t y = 0; y < sub_iters; ++y) {
 				uint64_t base_index = y * test_size;

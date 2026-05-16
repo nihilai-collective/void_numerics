@@ -35,6 +35,7 @@ set(VN_CLANG_COMPILE_OPTIONS
         -fsanitize=undefined
         -fno-sanitize-recover=all
     >
+    $<IF:$<AND:$<CXX_COMPILER_ID:Clang>,$<VERSION_EQUAL:$<CXX_COMPILER_VERSION>,23>>, -Wno-lifetime-safety-intra-tu-suggestions,>
     $<$<CONFIG:Debug>:-O0>
     $<$<CONFIG:Debug>:-g>
     -Weverything
@@ -119,13 +120,6 @@ FetchContent_MakeAvailable(rt-ut)
 add_executable(vn_unit_tests "void_numerics.cpp")
 
 target_link_libraries(vn_unit_tests PUBLIC void-numerics::void-numerics rt-ut::rt-ut)
-
-set(VN_COMPILE_DEFINITIONS
-    $<$<BOOL:${VN_ASAN}>:
-        VN_ASAN_ENABLED
-    >
-    $<$<BOOL:${VN_UBSAN}>:VN_UBSAN_ENABLED>
-)
 
 target_compile_definitions(vn_unit_tests PUBLIC ${VN_COMPILE_DEFINITIONS})
 
