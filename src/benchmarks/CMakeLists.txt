@@ -58,12 +58,34 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(jeaiii_itoa)
 add_library(jeaiii_itoa INTERFACE)
 target_include_directories(jeaiii_itoa INTERFACE ${jeaiii_itoa_SOURCE_DIR}/itoa)
+
+set(ABSL_PROPAGATE_CXX_STD ON CACHE BOOL "" FORCE)
+
+if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "" FORCE)
+    add_compile_options(-D_DARWIN_C_SOURCE)
+endif()
+
+if(APPLE)
+    set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "" FORCE)
+    set(ABSL_RANDOM_HWAES_ARM64 ON CACHE BOOL "" FORCE)
+endif()
+
+FetchContent_Declare(
+  abseil-cpp
+  GIT_REPOSITORY https://github.com/abseil/abseil-cpp.git
+  GIT_TAG lts_2025_01_27
+  GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(abseil-cpp)
+
 add_executable(vn_benchmarks "void_numerics.cpp")
 target_link_libraries(vn_benchmarks
   void-numerics::void-numerics
   benchmarksuite::benchmarksuite
   fmt::fmt
   jeaiii_itoa
+  absl::strings
 )
 target_compile_definitions(vn_benchmarks PRIVATE $<$<BOOL:${VN_ASAN}>:_ITERATOR_DEBUG_LEVEL=0>)
 install(

@@ -5,6 +5,7 @@
 
 #include <bnch_swt/index.hpp>
 #include <void-numerics>
+#include <absl/strings/numbers.h>
 #include "utility.hpp"
 #include <charconv>
 #include <cstring>
@@ -55,6 +56,14 @@ namespace str_to_i_tests {
 		template<typename v_type> VN_FORCE_INLINE static v_type convert(const char* buf, uint8_t len) noexcept {
 			v_type result{};
 			std::from_chars(buf, buf + len, result);
+			return result;
+		}
+	};
+
+	struct absl_from_op {
+		template<typename v_type> VN_FORCE_INLINE static v_type convert(const char* buf, uint8_t len) noexcept {
+			v_type result{};
+			absl::SimpleAtoi(absl::string_view(buf, len), &result);
 			return result;
 		}
 	};

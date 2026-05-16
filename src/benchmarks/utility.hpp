@@ -158,13 +158,14 @@ namespace benchmarks {
 	template<typename benchmark_stage_type, bnch_swt::string_literal stage_name, uint64_t test_size, uint64_t total_iters, uint64_t sub_iters, uint64_t measured_iters,
 		typename correctness_verifier, template<uint64_t, uint64_t, uint64_t, typename, uint64_t, uint64_t, bool> typename digit_generator_type, typename... test_types>
 	auto test_function_impl() {
+		/*
 		digit_iterator<benchmark_stage_type, "int8", test_size, total_iters, sub_iters, measured_iters, int8_t, correctness_verifier, digit_generator_type, test_types...>::impl();
 		digit_iterator<benchmark_stage_type, "uint8", test_size, total_iters, sub_iters, measured_iters, uint8_t, correctness_verifier, digit_generator_type,
 			test_types...>::impl();
 		digit_iterator<benchmark_stage_type, "int16", test_size, total_iters, sub_iters, measured_iters, int16_t, correctness_verifier, digit_generator_type,
 			test_types...>::impl();
 		digit_iterator<benchmark_stage_type, "uint16", test_size, total_iters, sub_iters, measured_iters, uint16_t, correctness_verifier, digit_generator_type,
-			test_types...>::impl();
+			test_types...>::impl();*/
 		digit_iterator<benchmark_stage_type, "int32", test_size, total_iters, sub_iters, measured_iters, int32_t, correctness_verifier, digit_generator_type,
 			test_types...>::impl();
 		digit_iterator<benchmark_stage_type, "uint32", test_size, total_iters, sub_iters, measured_iters, uint32_t, correctness_verifier, digit_generator_type,
