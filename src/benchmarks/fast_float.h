@@ -179,14 +179,14 @@
 
 namespace fast_float {
 
-enum class chars_format : uint64_t;
+enum class std:: chars_format : uint64_t;
 
 namespace detail {
-constexpr chars_format basic_json_fmt = chars_format(1 << 5);
-constexpr chars_format basic_fortran_fmt = chars_format(1 << 6);
+constexpr std:: chars_format basic_json_fmt = std:: chars_format(1 << 5);
+constexpr std:: chars_format basic_fortran_fmt = std:: chars_format(1 << 6);
 } // namespace detail
 
-enum class chars_format : uint64_t {
+enum class std:: chars_format : uint64_t {
   scientific = 1 << 0,
   fixed = 1 << 2,
   hex = 1 << 3,
@@ -219,7 +219,7 @@ template <typename UC> struct parse_options_t {
       : format(fmt), decimal_point(dot), base(b) {}
 
   /** Which number formats are accepted */
-  chars_format format;
+  std:: chars_format format;
   /** The character used as decimal point */
   UC decimal_point;
   /** The base used for integers */
@@ -1520,47 +1520,47 @@ static_assert(
     "std::bfloat16_t must fulfill the requirements of IEC 559 (IEEE 754)");
 #endif // __STDCPP_BFLOAT16_T__
 
-constexpr chars_format operator~(chars_format rhs) noexcept {
+constexpr std:: chars_format operator~(chars_format rhs) noexcept {
   using int_type = std::underlying_type<chars_format>::type;
   return static_cast<chars_format>(~static_cast<int_type>(rhs));
 }
 
-constexpr chars_format operator&(chars_format lhs, chars_format rhs) noexcept {
+constexpr std:: chars_format operator&(chars_format lhs, std:: chars_format rhs) noexcept {
   using int_type = std::underlying_type<chars_format>::type;
   return static_cast<chars_format>(static_cast<int_type>(lhs) &
                                    static_cast<int_type>(rhs));
 }
 
-constexpr chars_format operator|(chars_format lhs, chars_format rhs) noexcept {
+constexpr std:: chars_format operator|(chars_format lhs, std:: chars_format rhs) noexcept {
   using int_type = std::underlying_type<chars_format>::type;
   return static_cast<chars_format>(static_cast<int_type>(lhs) |
                                    static_cast<int_type>(rhs));
 }
 
-constexpr chars_format operator^(chars_format lhs, chars_format rhs) noexcept {
+constexpr std:: chars_format operator^(chars_format lhs, std:: chars_format rhs) noexcept {
   using int_type = std::underlying_type<chars_format>::type;
   return static_cast<chars_format>(static_cast<int_type>(lhs) ^
                                    static_cast<int_type>(rhs));
 }
 
-fastfloat_really_inline FASTFLOAT_CONSTEXPR14 chars_format &
-operator&=(chars_format &lhs, chars_format rhs) noexcept {
+fastfloat_really_inline FASTFLOAT_CONSTEXPR14 std:: chars_format &
+operator&=(chars_format &lhs, std:: chars_format rhs) noexcept {
   return lhs = (lhs & rhs);
 }
 
-fastfloat_really_inline FASTFLOAT_CONSTEXPR14 chars_format &
-operator|=(chars_format &lhs, chars_format rhs) noexcept {
+fastfloat_really_inline FASTFLOAT_CONSTEXPR14 std:: chars_format &
+operator|=(chars_format &lhs, std:: chars_format rhs) noexcept {
   return lhs = (lhs | rhs);
 }
 
-fastfloat_really_inline FASTFLOAT_CONSTEXPR14 chars_format &
-operator^=(chars_format &lhs, chars_format rhs) noexcept {
+fastfloat_really_inline FASTFLOAT_CONSTEXPR14 std:: chars_format &
+operator^=(chars_format &lhs, std:: chars_format rhs) noexcept {
   return lhs = (lhs ^ rhs);
 }
 
 namespace detail {
 // adjust for deprecated feature macros
-constexpr chars_format adjust_for_feature_macros(chars_format fmt) {
+constexpr std:: chars_format adjust_for_feature_macros(chars_format fmt) {
   return fmt
 #ifdef FASTFLOAT_ALLOWS_LEADING_PLUS
          | std::chars_format::allow_leading_plus
@@ -1610,7 +1610,7 @@ template <typename T, typename UC = char,
           typename = FASTFLOAT_ENABLE_IF(is_supported_float_type<T>::value)>
 FASTFLOAT_CONSTEXPR20 from_chars_result_t<UC>
 from_chars(UC const *first, UC const *last, T &value,
-           chars_format fmt = std::chars_format::general) noexcept;
+           std:: chars_format fmt = std::chars_format::general) noexcept;
 
 /**
  * Like from_chars, but accepts an `options` argument to govern number parsing.
@@ -1985,7 +1985,7 @@ template <bool basic_json_fmt, typename UC>
 fastfloat_really_inline FASTFLOAT_CONSTEXPR20 parsed_number_string_t<UC>
 parse_number_string(UC const *p, UC const *pend,
                     parse_options_t<UC> options) noexcept {
-  chars_format const fmt = detail::adjust_for_feature_macros(options.format);
+  std:: chars_format const fmt = detail::adjust_for_feature_macros(options.format);
   UC const decimal_point = options.decimal_point;
 
   parsed_number_string_t<UC> answer;
@@ -2176,7 +2176,7 @@ template <typename T, typename UC>
 fastfloat_really_inline FASTFLOAT_CONSTEXPR20 from_chars_result_t<UC>
 parse_int_string(UC const *p, UC const *pend, T &value,
                  parse_options_t<UC> options) {
-  chars_format const fmt = detail::adjust_for_feature_macros(options.format);
+  std:: chars_format const fmt = detail::adjust_for_feature_macros(options.format);
   int32_t const base = options.base;
 
   from_chars_result_t<UC> answer;
@@ -4461,7 +4461,7 @@ namespace detail {
 template <typename T, typename UC>
 from_chars_result_t<UC>
     FASTFLOAT_CONSTEXPR14 parse_infnan(UC const *first, UC const *last,
-                                       T &value, chars_format fmt) noexcept {
+                                       T &value, std:: chars_format fmt) noexcept {
   from_chars_result_t<UC> answer{};
   answer.ptr = first;
   answer.ec = std::errc(); // be optimistic
@@ -4622,7 +4622,7 @@ template <> struct from_chars_caller<std::float64_t> {
 template <typename T, typename UC, typename>
 FASTFLOAT_CONSTEXPR20 from_chars_result_t<UC>
 from_chars(UC const *first, UC const *last, T &value,
-           chars_format fmt /*= std::chars_format::general*/) noexcept {
+           std:: chars_format fmt /*= std::chars_format::general*/) noexcept {
   return from_chars_caller<T>::call(first, last, value,
                                     parse_options_t<UC>(fmt));
 }
@@ -4738,7 +4738,7 @@ from_chars_float_advanced(UC const *first, UC const *last, T &value,
   static_assert(is_supported_char_type<UC>::value,
                 "only char, wchar_t, char16_t and char32_t are supported");
 
-  chars_format const fmt = detail::adjust_for_feature_macros(options.format);
+  std:: chars_format const fmt = detail::adjust_for_feature_macros(options.format);
 
   from_chars_result_t<UC> answer;
   if (uint64_t(fmt & std::chars_format::skip_white_space)) {
@@ -4871,7 +4871,7 @@ from_chars_int_advanced(UC const *first, UC const *last, T &value,
   static_assert(is_supported_char_type<UC>::value,
                 "only char, wchar_t, char16_t and char32_t are supported");
 
-  chars_format const fmt = detail::adjust_for_feature_macros(options.format);
+  std:: chars_format const fmt = detail::adjust_for_feature_macros(options.format);
   int32_t const base = options.base;
 
   from_chars_result_t<UC> answer;

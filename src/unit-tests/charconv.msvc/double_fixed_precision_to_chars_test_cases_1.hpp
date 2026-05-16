@@ -42,7 +42,7 @@
 #include <charconv>
 #include "../utility.hpp"
 #include "test.hpp"
-using namespace std;
+
 
 inline constexpr DoublePrecisionToCharsTestCase double_fixed_precision_to_chars_test_cases_1[] = {
     // Test special cases (zero, inf, nan) and an ordinary case. Also test negative signs.

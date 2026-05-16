@@ -152,7 +152,7 @@ namespace vn {
 
 		template<bool negative, integer_types v_type>
 		VN_FORCE_INLINE static const char* parse_integer(v_type& value_new, const char* __restrict iter, const char* __restrict end) noexcept {
-			using v_type_local					  = std::make_unsigned_t<v_type>;
+			using v_type_local = std::make_unsigned_t<v_type>;
 			VN_ALIGN(64) static constexpr v_type_local zero_val{ 0 };
 
 			if VN_UNLIKELY (iter >= end) {
@@ -500,18 +500,10 @@ namespace vn {
 			if VN_LIKELY (iter < end) {
 				c = static_cast<uint8_t>(*iter);
 				if VN_LIKELY (vn_is_digit(c)) {
-					if constexpr (negative) {
-						if VN_UNLIKELY (static_cast<uint64_t>(value) > static_cast<uint64_t>(raw_comp_vals_neg<v_type>[c])) {
-							while (++iter < end && vn_is_digit(static_cast<uint8_t>(*iter))) {
-							}
-							return iter;
+					if VN_UNLIKELY (static_cast<uint64_t>(value) > static_cast<uint64_t>(comp_vals<v_type, negative>[c])) {
+						while (++iter < end && vn_is_digit(static_cast<uint8_t>(*iter))) {
 						}
-					} else {
-						if VN_UNLIKELY (static_cast<uint64_t>(value) > static_cast<uint64_t>(raw_comp_vals_pos<v_type>[c])) {
-							while (++iter < end && vn_is_digit(static_cast<uint8_t>(*iter))) {
-							}
-							return iter;
-						}
+						return iter;
 					}
 					value = static_cast<v_type_local>(value * 10 + (c - zero));
 					++iter;

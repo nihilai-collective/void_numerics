@@ -8,7 +8,7 @@
 
 #include "test.hpp"
 #include "../utility.hpp"
-using namespace std;
+
 
 // C11 7.21.6.1 "The fprintf function"/8:
 

@@ -49,6 +49,11 @@
 
 #define VN_ALIGN(x) alignas(x)
 
+#if VN_COMPILER_MSVC
+	#pragma warning(push)
+	#pragma warning(disable : 4324)
+#endif
+
 #if VN_DEBUG
 	#if VN_COMPILER_MSVC
 		#define VN_FORCE_INLINE [[msvc::noinline]]

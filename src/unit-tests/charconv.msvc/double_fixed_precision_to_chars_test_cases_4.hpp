@@ -8,7 +8,7 @@
 
 #include "test.hpp"
 #include "../utility.hpp"
-using namespace std;
+
 
 inline constexpr DoublePrecisionToCharsTestCase double_fixed_precision_to_chars_test_cases_4[] = {
     // Test the maximum mantissa, which generates the most digits for each exponent.

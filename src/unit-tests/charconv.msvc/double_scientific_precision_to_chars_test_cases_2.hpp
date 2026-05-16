@@ -43,7 +43,7 @@
 
 #include "test.hpp"
 #include "../utility.hpp"
-using namespace std;
+
 
 inline constexpr DoublePrecisionToCharsTestCase double_scientific_precision_to_chars_test_cases_2[] = {
     // Ryu Printf d2fixed_test.cc D2expTest AllPowersOfTen

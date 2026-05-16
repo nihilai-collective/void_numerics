@@ -5,6 +5,7 @@ on:
   pull_request:
     branches: [ "**" ]
   workflow_dispatch:
+
 jobs:
   build:
     strategy:
@@ -13,125 +14,103 @@ jobs:
         include:
           - os: ubuntu-latest
             compiler: clang
-            cc: clang
-            cxx: clang++
             name: "Ubuntu Clang"
-            cmake_cxx: /usr/bin/clang++-20
+            cmake_cxx: clang++-22
+            cmake_cc: clang-22
           - os: ubuntu-latest
             compiler: gcc
-            cc: gcc
-            cxx: g++
             name: "Ubuntu GCC"
-            cmake_cxx: /usr/bin/g++-14
+            cmake_cxx: g++-14
+            cmake_cc: gcc-14
           - os: macos-latest
             compiler: clang
-            cc: clang
-            cxx: clang++
             name: "macOS Clang"
-            cmake_cxx: ""
+            cmake_cxx: /opt/homebrew/opt/llvm/bin/clang++
+            cmake_cc: /opt/homebrew/opt/llvm/bin/clang
           - os: macos-latest
             compiler: gcc
-            cc: gcc
-            cxx: g++
             name: "macOS GCC"
-            cmake_cxx: ""
+            cmake_cxx: g++-14
+            cmake_cc: gcc-14
           - os: windows-latest
             compiler: msvc
             name: "Windows MSVC"
-            cmake_cxx: ""
+            cmake_cxx: cl
+            cmake_cc: cl
+
     runs-on: ${{ matrix.os }}
     name: Build on ${{ matrix.name }}
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Clang (Ubuntu)
+        if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang'
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod u+x llvm.sh
+          sudo ./llvm.sh 22
+
+      - name: Setup GCC (Ubuntu)
+        if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++-14
+
+      - name: Setup Homebrew Dependencies (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          if [ "${{ matrix.compiler }}" = "clang" ]; then
+            brew install llvm
+          else
+            brew install gcc
+          fi
+
+      - name: Configure CMake (macOS-Clang)
+        if: matrix.os == 'macos-latest' && matrix.compiler == 'clang'
+        run: |    
+           export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+           export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
+           export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
     
-    - name: Setup Clang (Ubuntu)
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang'
-      run: |
-        sudo apt-get update
-        sudo apt update
-        wget https://apt.llvm.org/llvm.sh
-        chmod u+x llvm.sh
-        sudo ./llvm.sh 20
+           cmake -S . -B ./Build \
+           -DCMAKE_BUILD_TYPE=Debug \
+           -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++ \
+           -DVN_BENCHMARKS=TRUE \
+           -DVN_TESTS=TRUE
+
+      - name: Setup MSVC (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B ./Build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=${{ matrix.cmake_cxx }} -DCMAKE_C_COMPILER=${{ matrix.cmake_cc }} -DVN_BENCHMARKS=TRUE -DVN_TESTS=TRUE
     
-    - name: Setup GCC (Ubuntu)
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc'
-      run: |
-        sudo apt-get install build-essential
-        sudo apt-get install g++-14
-    
-    - name: Setup Clang (macOS)
-      if: matrix.os == 'macos-latest' && matrix.compiler == 'clang'
-      run: |
-        brew install llvm
-    
-    - name: Setup GCC (macOS)
-      if: matrix.os == 'macos-latest' && matrix.compiler == 'gcc'
-      run: |
-        brew install gcc
-        GCC_PATH=$(brew --prefix gcc)
-        GCC_VER=$(ls ${GCC_PATH}/bin/gcc-* 2>/dev/null | grep -oE '[0-9]+$' | sort -rn | head -1)
-        echo "CC=${GCC_PATH}/bin/gcc-${GCC_VER}" >> $GITHUB_ENV
-        echo "CXX=${GCC_PATH}/bin/g++-${GCC_VER}" >> $GITHUB_ENV
-        ${GCC_PATH}/bin/gcc-${GCC_VER} --version
-        ${GCC_PATH}/bin/g++-${GCC_VER} --version
-    
-    - name: Setup MSVC (Windows)
-      if: matrix.os == 'windows-latest'
-      uses: ilammy/msvc-dev-cmd@v1
-    
-    - name: Create Build Directory
-      run: mkdir -p Build
-    
-    - name: Configure CMake (Ubuntu-GCC)
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'gcc'
-      run: |
-        cmake -S . -B ./Build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=${{ matrix.cmake_cxx }} -DVN_TESTS=TRUE -DVN_BENCHMARKS=TRUE -DVN_ASAN=TRUE -DVN_UBSAN=TRUE
-    
-    - name: Configure CMake (Ubuntu-Clang)
-      if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang'
-      run: |
-        cmake -S . -B ./Build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=${{ matrix.cmake_cxx }} -DVN_TESTS=TRUE -DVN_BENCHMARKS=TRUE -DVN_ASAN=TRUE -DVN_UBSAN=TRUE
-    
-    - name: Configure CMake (macOS-Clang)
-      if: matrix.os == 'macos-latest' && matrix.compiler == 'clang'
-      run: |
-        cmake -S . -B ./Build -DCMAKE_BUILD_TYPE=Debug -DVN_TESTS=TRUE -DVN_BENCHMARKS=TRUE -DVN_ASAN=TRUE -DVN_UBSAN=TRUE
-    
-    - name: Configure CMake (macOS-GCC)
-      if: matrix.os == 'macos-latest' && matrix.compiler == 'gcc'
-      run: |
-        cmake -S . -B ./Build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=${{ env.CC }} -DCMAKE_CXX_COMPILER=${{ env.CXX }} -DVN_BENCHMARKS=TRUE -DVN_TESTS=TRUE -DVN_ASAN=TRUE -DVN_UBSAN=TRUE
-    
-    - name: Configure CMake (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        cmake -S . -B ./Build -DCMAKE_BUILD_TYPE=Debug -DVN_TESTS=TRUE -DVN_BENCHMARKS=TRUE -DVN_ASAN=TRUE -DVN_UBSAN=TRUE
-    
-    - name: Build the Test
-      run: |
+      - name: Build the Test
+        run: |
             cmake --build ./Build --config=Debug -v
         
-    - name: Install the Test (Unix)
-      if: matrix.os != 'windows-latest'
-      run: |
+      - name: Install the Test (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
             sudo cmake --install ./Build --config=Debug
     
-    - name: Install the Test (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
+      - name: Install the Test (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
             cmake --install ./Build --config=Debug
     
-    - name: Run the Test (Unix)
-      if: matrix.os != 'windows-latest'
-      run: |
+      - name: Run the Test (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
             sudo chmod +x /usr/local/bin/vn_unit_tests
             sudo /usr/local/bin/vn_unit_tests
             sudo chmod +x /usr/local/bin/vn_benchmarks    
             sudo /usr/local/bin/vn_benchmarks
     
-    - name: Run the Test (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
+      - name: Run the Test (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
             & "C:/Program Files (x86)/void-numerics/bin/vn_unit_tests.exe"
             & "C:/Program Files (x86)/void-numerics/bin/vn_benchmarks.exe"

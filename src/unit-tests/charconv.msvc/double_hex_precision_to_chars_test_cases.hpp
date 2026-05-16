@@ -8,7 +8,7 @@
 
 #include "test.hpp"
 #include "../utility.hpp"
-using namespace std;
+
 
 inline constexpr DoublePrecisionToCharsTestCase double_hex_precision_to_chars_test_cases[] = {
     // Test special cases (zero, inf, nan) and an ordinary case. Also test negative signs.

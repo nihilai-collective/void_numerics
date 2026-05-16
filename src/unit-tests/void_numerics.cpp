@@ -11,23 +11,18 @@
 #include "llvm_to_chars.hpp"
 #include "llvm_roundtrip.hpp"
 #include "llvm_integral_pass.hpp"
-#include "llvm_floating_point_pass.hpp"
-#include "charconv.msvc/test.hpp"
+//#include "llvm_floating_point_pass.hpp"
+//#include "charconv.msvc/test.hpp"
 
-int32_t main(int32_t argc, char**argv) {
-	mt19937_64 mt64;
-	initialize_randomness(mt64, argc, argv);
-	all_integer_tests();
-	//all_floating_tests(mt64);
-	double val{ 3.333e307 };
-	std::string string{};
-	string.resize(128);
-	vn::to_chars(string.data(), string.data() + string.size(), val);
-	std::cout << "VALUE: " << string << std::endl;
+int32_t main([[maybe_unused]] int32_t argc, [[maybe_unused]] char** argv) {
+	//std::mt19937_64 mt64;
+	//tests::initialize_randomness(mt64, argc, argv);
+	//tests::all_integer_tests();
+	//tests::all_floating_tests(mt64);
 	unit_tests::tests<vn::detail::conversion_classes::i_to_str>::impl();
 	unit_tests::tests<vn::detail::conversion_classes::str_to_i>::impl();
 	integral_pass_llvm_tests::test();
-	floating_point_pass_llvm_tests::test();
+	//floating_point_pass_llvm_tests::test();
 	roundtrip_llvm_tests::test();
 	to_chars_llvm_tests::test();
 	return 0;

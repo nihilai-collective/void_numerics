@@ -11,10 +11,10 @@
 // XFAIL: availability-fp_from_chars-missing
 
 // from_chars_result from_chars(const char* first, const char* last,
-//                              float& value, chars_format fmt = std::chars_format::general)
+//                              float& value, std:: chars_format fmt = std::chars_format::general)
 //
 // from_chars_result from_chars(const char* first, const char* last,
-//                              double& value, chars_format fmt = std::chars_format::general)
+//                              double& value, std:: chars_format fmt = std::chars_format::general)
 // unit-tests/llvm_floating_point_pass.hpp
 
 #pragma once

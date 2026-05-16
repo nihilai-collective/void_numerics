@@ -43,7 +43,7 @@
 
 #include "test.hpp"
 #include "../utility.hpp"
-using namespace std;
+
 
 inline constexpr FloatPrecisionToCharsTestCase float_scientific_precision_to_chars_test_cases[] = {
     // Test special cases (zero, inf, nan) and an ordinary case. Also test negative signs.

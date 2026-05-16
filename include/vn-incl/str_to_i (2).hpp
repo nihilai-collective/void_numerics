@@ -42,7 +42,7 @@ namespace vn {
 		}
 
 		template<typename v_type> VN_ALIGN(64)
-		static constexpr const std::make_unsigned_t<v_type>* __restrict raw_comp_vals_pos{ [] {
+		static constexpr const std::make_unsigned_t<v_type>* __restrict raw_comp_vals{ [] {
 			VN_ALIGN(64)
 			constexpr std::array<std::make_unsigned_t<v_type>, 256> return_values{ [] {
 				constexpr auto max_value{ static_cast<std::make_unsigned_t<v_type>>(std::numeric_limits<std::decay_t<v_type>>::max()) };
@@ -63,7 +63,7 @@ namespace vn {
 		}() };
 
 		template<typename v_type> VN_ALIGN(64)
-		static constexpr const std::make_unsigned_t<v_type>* __restrict raw_comp_vals_neg{ [] {
+		static constexpr const std::make_unsigned_t<v_type>* __restrict raw_comp_vals{ [] {
 			VN_ALIGN(64)
 			constexpr std::array<std::make_unsigned_t<v_type>, 256> return_values{ [] {
 				constexpr auto max_value{ static_cast<std::make_unsigned_t<v_type>>(std::numeric_limits<std::make_signed_t<v_type>>::max()) + 1 };
@@ -1760,13 +1760,13 @@ namespace vn {
 				c = static_cast<uint8_t>(*iter);
 				if VN_LIKELY (vn_is_digit(c)) {
 					if constexpr (negative) {
-						if (static_cast<uint64_t>(value) > static_cast<uint64_t>(raw_comp_vals_neg<v_type>[c])) {
+						if (static_cast<uint64_t>(value) > static_cast<uint64_t>(raw_comp_vals<v_type>[c])) {
 							while (++iter < end && vn_is_digit(static_cast<uint8_t>(*iter))) {
 							}
 							return iter;
 						}
 					} else {
-						if (static_cast<uint64_t>(value) > static_cast<uint64_t>(raw_comp_vals_pos<v_type>[c])) {
+						if (static_cast<uint64_t>(value) > static_cast<uint64_t>(raw_comp_vals<v_type>[c])) {
 							while (++iter < end && vn_is_digit(static_cast<uint8_t>(*iter))) {
 							}
 							return iter;
@@ -2153,13 +2153,13 @@ namespace vn {
 				c = static_cast<uint8_t>(*iter);
 				if VN_LIKELY (vn_is_digit(c)) {
 					if constexpr (negative) {
-						if (static_cast<uint64_t>(value) > static_cast<uint64_t>(raw_comp_vals_neg<v_type>[c])) {
+						if (static_cast<uint64_t>(value) > static_cast<uint64_t>(raw_comp_vals<v_type>[c])) {
 							while (++iter < end && vn_is_digit(static_cast<uint8_t>(*iter))) {
 							}
 							return iter;
 						}
 					} else {
-						if (static_cast<uint64_t>(value) > static_cast<uint64_t>(raw_comp_vals_pos<v_type>[c])) {
+						if (static_cast<uint64_t>(value) > static_cast<uint64_t>(raw_comp_vals<v_type>[c])) {
 							while (++iter < end && vn_is_digit(static_cast<uint8_t>(*iter))) {
 							}
 							return iter;
