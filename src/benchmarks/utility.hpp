@@ -127,12 +127,6 @@ namespace benchmarks {
 		vn::detail::integer_types v_type, typename correctness_verifier, template<uint64_t, uint64_t, uint64_t, typename, uint64_t, uint64_t, bool> typename digit_generator_type,
 		bool negative, typename... test_types>
 	static void mixed_digit_count(bnch_swt::internal::cache_clearer<bnch_swt::benchmark_types::cpu>& cclearer) {
-		run_one_test<benchmark_stage_type, test_name, 1, total_iters, sub_iters_new, measured_iters, v_type, correctness_verifier, digit_generator_type, negative, test_types...>(
-			cclearer);
-		run_one_test<benchmark_stage_type, test_name, 10, total_iters, sub_iters_new, measured_iters, v_type, correctness_verifier, digit_generator_type, negative, test_types...>(
-			cclearer);
-		run_one_test<benchmark_stage_type, test_name, 100, total_iters, sub_iters_new, measured_iters, v_type, correctness_verifier, digit_generator_type, negative, test_types...>(
-			cclearer);
 		run_one_test<benchmark_stage_type, test_name, 1000, total_iters, sub_iters_new, measured_iters, v_type, correctness_verifier, digit_generator_type, negative,
 			test_types...>(cclearer);
 		run_one_test<benchmark_stage_type, test_name, 10000, total_iters, sub_iters_new, measured_iters, v_type, correctness_verifier, digit_generator_type, negative,

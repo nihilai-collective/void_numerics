@@ -290,10 +290,19 @@ namespace vn {
 
 		template<typename v_type, uint64_t divisor> struct multiply_and_shift;
 
+		template<uint_types v_type, uint64_t divisor> struct multiply_and_shift<v_type, divisor> {
+			static constexpr auto entry = mul_shift_table<v_type>::table[divisor_to_index<divisor>()];
+			VN_FORCE_INLINE static v_type impl(v_type value) noexcept {
+				static constexpr v_type m	= entry.multiplicand;
+				static constexpr uint64_t s = entry.shift;
+				return static_cast<v_type>((static_cast<uint64_t>(value) * m) >> s);
+			}
+		};
+
 		template<uint64_types v_type, uint64_t divisor> struct multiply_and_shift<v_type, divisor> {
-			static constexpr const auto& entry = mul_shift_table<v_type>::table[divisor_to_index<divisor>()];
-			static constexpr const v_type& m   = entry.multiplicand;
-			static constexpr const uint64_t& s = entry.shift;
+			static constexpr auto entry = mul_shift_table<v_type>::table[divisor_to_index<divisor>()];
+			static constexpr v_type m	= entry.multiplicand;
+			static constexpr uint64_t s = entry.shift;
 			static_assert(s >= 64ULL);
 			VN_FORCE_INLINE static v_type impl(v_type value) noexcept {
 #if VN_COMPILER_CLANG || VN_COMPILER_GNU

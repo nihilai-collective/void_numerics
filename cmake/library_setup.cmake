@@ -55,9 +55,9 @@ target_compile_options(${PROJECT_NAME}
             $<$<AND:$<CONFIG:Release>,$<NOT:$<BOOL:${VN_ASAN}>>>:
                 -O3
                 -march=native
-                -mtune=native
                 -flto
                 -fomit-frame-pointer
+                -fno-plt
                 -fno-rtti
             >
             $<$<AND:$<CONFIG:Debug>,$<BOOL:${VN_ASAN}>>:
