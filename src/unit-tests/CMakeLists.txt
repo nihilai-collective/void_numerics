@@ -25,6 +25,17 @@ option(VN_ASAN "Enable AddressSanitizer" OFF)
 option(VN_UBSAN "Enable UndefinedBehaviorSanitizer" OFF)
 
 set(VN_CLANG_COMPILE_OPTIONS
+    $<$<BOOL:${VN_ASAN}>:
+        -fsanitize=address
+        -fsanitize-address-use-after-scope
+        -U_FORTIFY_SOURCE
+        -D_FORTIFY_SOURCE=0
+    >
+    $<$<BOOL:${VN_UBSAN}>:
+        -fsanitize=undefined
+        -fno-sanitize-recover=all
+    >
+    $<IF:$<AND:$<CXX_COMPILER_ID:Clang>,$<VERSION_EQUAL:$<CXX_COMPILER_VERSION>,23>>, -Wno-lifetime-safety-intra-tu-suggestions,>
     $<$<CONFIG:Debug>:-O0>
     $<$<CONFIG:Debug>:-g>
     -Weverything
@@ -37,10 +48,21 @@ set(VN_CLANG_COMPILE_OPTIONS
     -Wno-zero-as-null-pointer-constant
     -Wno-c++98-compat-pedantic
     -Wno-c++98-compat
+    -Wno-float-equal
     -Wno-class-varargs
 )
 
 set(VN_GNU_COMPILE_OPTIONS
+    $<$<BOOL:${VN_ASAN}>:
+        -fsanitize=address
+        -fsanitize-address-use-after-scope
+        -U_FORTIFY_SOURCE
+        -D_FORTIFY_SOURCE=0
+    >
+    $<$<BOOL:${VN_UBSAN}>:
+        -fsanitize=undefined
+        -fno-sanitize-recover=all
+    >
     $<$<CONFIG:Debug>:-O0>
     $<$<CONFIG:Debug>:-g>
     -Wpedantic
@@ -51,6 +73,7 @@ set(VN_GNU_COMPILE_OPTIONS
 )
 
 set(VN_MSVC_COMPILE_OPTIONS
+    $<$<BOOL:${VN_ASAN}>:/fsanitize=address>
     /W4
     /WX
 )
@@ -60,6 +83,30 @@ set(VN_COMPILE_OPTIONS
     $<$<CXX_COMPILER_ID:Clang>:${VN_CLANG_COMPILE_OPTIONS}>
     $<$<CXX_COMPILER_ID:MSVC>:${VN_MSVC_COMPILE_OPTIONS}>
     $<$<CXX_COMPILER_ID:GNU>:${VN_GNU_COMPILE_OPTIONS}>
+)
+
+set(VN_CLANG_LINK_OPTIONS
+    $<$<BOOL:${VN_ASAN}>:-fsanitize=address>
+    $<$<BOOL:${VN_UBSAN}>:-fsanitize=undefined>
+)
+
+set(VN_GNU_LINK_OPTIONS
+   $<$<BOOL:${VN_ASAN}>:
+        -fsanitize=address
+        -static-libasan
+    >
+    $<$<BOOL:${VN_UBSAN}>:-fsanitize=undefined>
+)
+
+set(VN_MSVC_LINK_OPTIONS
+    $<$<BOOL:${VN_ASAN}>:/INFERASANLIBS>
+)
+
+set(VN_LINK_OPTIONS
+    $<$<CXX_COMPILER_ID:AppleClang>:${VN_CLANG_LINK_OPTIONS}>
+    $<$<CXX_COMPILER_ID:Clang>:${VN_CLANG_LINK_OPTIONS}>
+    $<$<CXX_COMPILER_ID:MSVC>:${VN_MSVC_LINK_OPTIONS}>
+    $<$<CXX_COMPILER_ID:GNU>:${VN_GNU_LINK_OPTIONS}>
 )
 
 FetchContent_Declare(
@@ -74,62 +121,11 @@ add_executable(vn_unit_tests "void_numerics.cpp")
 
 target_link_libraries(vn_unit_tests PUBLIC void-numerics::void-numerics rt-ut::rt-ut)
 
+target_compile_definitions(vn_unit_tests PUBLIC ${VN_COMPILE_DEFINITIONS})
+
 target_compile_options(vn_unit_tests PUBLIC ${VN_COMPILE_OPTIONS})
 
-if(VN_ASAN)
-    target_compile_definitions(vn_unit_tests PUBLIC VN_ASAN_ENABLED)
-endif()
-
-if(VN_UBSAN)
-    target_compile_definitions(vn_unit_tests PUBLIC VN_UBSAN_ENABLED)
-endif()
-
-target_compile_options(vn_unit_tests PUBLIC
-    $<$<CXX_COMPILER_ID:MSVC>:
-        $<$<BOOL:${VN_ASAN}>:/fsanitize=address>
-    >
-    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-        $<$<BOOL:${VN_ASAN}>:
-            -fsanitize=address
-            -fsanitize-address-use-after-scope
-            -U_FORTIFY_SOURCE
-            -D_FORTIFY_SOURCE=0
-        >
-        $<$<BOOL:${VN_UBSAN}>:
-            -fsanitize=undefined
-            -fno-sanitize-recover=all
-        >
-    >
-    $<$<AND:$<CXX_COMPILER_ID:GNU>,$<NOT:$<PLATFORM_ID:Darwin>>>:
-        $<$<BOOL:${VN_ASAN}>:
-            -fsanitize=address
-            -fsanitize-address-use-after-scope
-            -U_FORTIFY_SOURCE
-            -D_FORTIFY_SOURCE=0
-        >
-        $<$<BOOL:${VN_UBSAN}>:
-            -fsanitize=undefined
-            -fno-sanitize-recover=all
-        >
-    >
-)
-
-target_link_options(vn_unit_tests PUBLIC
-    $<$<CXX_COMPILER_ID:MSVC>:
-        $<$<BOOL:${VN_ASAN}>:/INFERASANLIBS>
-    >
-    $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
-        $<$<BOOL:${VN_ASAN}>:-fsanitize=address>
-        $<$<BOOL:${VN_UBSAN}>:-fsanitize=undefined>
-    >
-    $<$<AND:$<CXX_COMPILER_ID:GNU>,$<NOT:$<PLATFORM_ID:Darwin>>>:
-        $<$<BOOL:${VN_ASAN}>:
-            -fsanitize=address
-            -static-libasan
-        >
-        $<$<BOOL:${VN_UBSAN}>:-fsanitize=undefined>
-    >
-)
+target_link_options(vn_unit_tests PUBLIC ${VN_LINK_OPTIONS})
 
 install(
     FILES

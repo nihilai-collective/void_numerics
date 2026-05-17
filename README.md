@@ -1,6 +1,7 @@
 # void_numerics
+<p align="center"><img src="https://github.com/nihilai-collective/void_numerics/blob/main/logo.png?raw=true" width="150"/></p>
 
-**SWAR-optimized integer conversion for C++20.**
+**SWAR-optimized integer conversion for C++23.**
 
 `vn::to_chars` and `vn::from_chars` — drop-in replacements for the standard library equivalents, engineered for performance. Header-only, zero-allocation, no exceptions, no RTTI.
 
@@ -10,7 +11,11 @@
 
 The C++ standard library's `<charconv>` is already fast. `void_numerics` is faster — substantially so on hot integer-conversion paths — without sacrificing correctness, portability, or API compatibility.
 
-Every conversion is exhaustively unit-tested against `std::to_chars` / `std::from_chars` (including the LLVM libc++ test suite) and benchmarked against `std`, `jeaiii`, `fmt`, and `strtoll`/`strtoull` across 8-, 16-, 32-, and 64-bit signed and unsigned integer types.
+Every conversion is exhaustively unit-tested against `std::to_chars` / `std::from_chars` (including the LLVM libc++ test suite) and benchmarked against `std`, `jeaiii`, `fmt`, and `strtoll`/`strtoull` across 8-, 16-, 32-, and 64-bit signed and uint32_t integer types.
+
+---
+
+## [Benchmarks](https://github.com/nihilai-collective/void_numerics/blob/main/Benchmarks.md)
 
 ---
 
@@ -20,7 +25,7 @@ Every conversion is exhaustively unit-tested against `std::to_chars` / `std::fro
 - **All integer types**: `int8_t`, `uint8_t`, `int16_t`, `uint16_t`, `int32_t`, `uint32_t`, `int64_t`, `uint64_t`
 - **Header-only** — single include, no build step required to consume
 - **Zero allocation, zero exceptions, zero RTTI**
-- **C++20** — leverages concepts for type-correct dispatch
+- **C++23** — leverages concepts for type-correct dispatch
 - **Compile-time tables** for digit conversion and overflow bounds
 - **Multiply-and-shift division replacement** for hot paths
 - **Force-inlined helpers** with manual ladder dispatch sized to digit count
@@ -79,7 +84,7 @@ auto r = vn::to_chars(buf, buf + 32, 0xDEADBEEF, 16);
 
 ```cpp
 template<integer_types v_type>
-std::to_chars_result to_chars(char* first, char* last, v_type value, int base = 10) noexcept;
+std::to_chars_result to_chars(char* first, char* last, v_type value, int32_t base = 10) noexcept;
 ```
 
 Writes the textual representation of `value` to `[first, last)`. Returns `{ptr, std::errc{}}` on success, where `ptr` is one past the last character written. Returns `{last, std::errc::value_too_large}` if the buffer is too small.
@@ -88,7 +93,7 @@ Writes the textual representation of `value` to `[first, last)`. Returns `{ptr, 
 
 ```cpp
 template<integer_types v_type>
-std::from_chars_result from_chars(const char* first, const char* last, v_type& value, int base = 10) noexcept;
+std::from_chars_result from_chars(const char* first, const char* last, v_type& value, int32_t base = 10) noexcept;
 ```
 
 Parses an integer from `[first, last)` into `value`. Returns `{ptr, std::errc{}}` on success, where `ptr` points to the first character not consumed. Returns `{first, std::errc::invalid_argument}` if no characters could be parsed.
@@ -117,7 +122,7 @@ target_link_libraries(your_target PRIVATE void-numerics::void-numerics)
 
 ### Requirements
 
-- C++20-capable compiler (Clang ≥ 20, GCC ≥ 14, MSVC latest, AppleClang)
+- C++23-capable compiler (Clang ≥ 20, GCC ≥ 14, MSVC latest, AppleClang)
 - CMake ≥ 3.28
 
 ---

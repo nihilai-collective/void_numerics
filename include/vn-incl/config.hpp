@@ -8,18 +8,22 @@
 	#define VN_COMPILER_CLANG 1
 	#define VN_COMPILER_GNU 0
 	#define VN_COMPILER_MSVC 0
+	#define VN_LIFETIME_BOUND [[clang::lifetimebound]]
 #elif defined(__GNUC__) || defined(__GNUG__)
 	#define VN_COMPILER_CLANG 0
 	#define VN_COMPILER_GNU 1
 	#define VN_COMPILER_MSVC 0
+	#define VN_LIFETIME_BOUND
 #elif defined(_MSC_VER)
 	#define VN_COMPILER_CLANG 0
 	#define VN_COMPILER_GNU 0
 	#define VN_COMPILER_MSVC 1
+	#define VN_LIFETIME_BOUND [[msvc::lifetimebound]]
 #else
 	#define VN_COMPILER_CLANG 0
 	#define VN_COMPILER_GNU 0
 	#define VN_COMPILER_MSVC 0
+	#define VN_LIFETIME_BOUND
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -27,7 +31,6 @@
 	#define VN_PLATFORM_LINUX 0
 	#define VN_PLATFORM_MACOS 0
 #elif defined(__APPLE__) || defined(__MACH__)
-	#include <TargetConditionals.h>
 	#if TARGET_OS_MAC
 		#define VN_PLATFORM_WINDOWS 0
 		#define VN_PLATFORM_LINUX 0
@@ -47,15 +50,12 @@
 	#define VN_PLATFORM_MACOS 0
 #endif
 
-#ifndef VN_DEBUG
-	#if defined(_DEBUG) || (defined(NDEBUG) == 0) || defined(DEBUG)
-		#define VN_DEBUG 1
-	#else
-		#define VN_DEBUG 0
-	#endif
-#endif
-
 #define VN_ALIGN(x) alignas(x)
+
+#if VN_COMPILER_MSVC
+	#pragma warning(push)
+	#pragma warning(disable : 4324)
+#endif
 
 #if VN_DEBUG
 	#if VN_COMPILER_MSVC
@@ -97,13 +97,11 @@
 	#define VN_ALIGN(b) alignas(b)
 #endif
 
-#include <functional>
-#include <algorithm>
 #include <concepts>
 #include <charconv>
 #include <cstring>
 #include <cstdint>
-#include <vector>
+#include <limits>
 #include <array>
 #include <bit>
 
@@ -123,11 +121,4 @@ namespace vn {
 
 	}
 
-}
-
-template<typename v_type> VN_FORCE_INLINE std::vector<v_type>& operator+=(std::vector<v_type>& lhs, const std::vector<v_type>& rhs) {
-	auto orig_size = lhs.size();
-	lhs.resize(orig_size + rhs.size());
-	std::copy(rhs.begin(), rhs.end(), lhs.begin() + orig_size);
-	return lhs;
 }

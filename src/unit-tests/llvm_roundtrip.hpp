@@ -13,7 +13,8 @@
 // <charconv>
 
 // constexpr from_chars_result from_chars(const char* first, const char* last,
-//                                        Integral& value, int base = 10)
+//                                        Integral& value, int32_t base = 10)
+// unit-tests/llvm_roundtrip.hpp
 
 #include <charconv>
 #include <system_error>
@@ -37,7 +38,7 @@ namespace roundtrip_llvm_tests {
 			test(0xdeadbeaf, 16);
 			test(0755, 8);
 
-			for (int b = 2; b < 37; ++b) {
+			for (int32_t b = 2; b < 37; ++b) {
 				using xl = std::numeric_limits<v_type>;
 
 				test(1, b);
@@ -61,7 +62,7 @@ namespace roundtrip_llvm_tests {
 			test(-2647, 2);
 			test(-0xcc1, 16);
 
-			for (int b = 2; b < 37; ++b) {
+			for (int32_t b = 2; b < 37; ++b) {
 				using xl = std::numeric_limits<v_type>;
 
 				test(0, b);
@@ -72,10 +73,8 @@ namespace roundtrip_llvm_tests {
 	};
 
 	TEST_CONSTEXPR_CXX23 static bool test() {
-		std::cout << "Running LLVM Roundtrip tests" << std::endl;
 		run<test_basics>(integrals);
 		run<test_signed>(all_signed);
-		std::cout << "LLVM Roundtrip tests complete" << std::endl;
 		return true;
 	}
 

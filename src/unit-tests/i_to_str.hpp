@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Copyright (c) 2026 Nihilai Collective Corp
+// unit-tests/i_to_str.hpp
 
 #pragma once
 
@@ -209,7 +210,7 @@ template<> struct unit_tests::tests<vn::detail::conversion_classes::i_to_str> {
 		vn_to_chars_tests::test_function<"int16", int16_t>();
 		vn_to_chars_tests::test_function<"uint32", uint32_t>();
 		vn_to_chars_tests::test_function<"int32", int32_t>();
-		vn_to_chars_tests::test_function<"uint64", uint64_t>();
+		vn_to_chars_tests::test_function<"uint64_t", uint64_t>();
 		vn_to_chars_tests::test_function<"int64", int64_t>();
 	}
 };

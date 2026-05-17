@@ -13,7 +13,8 @@
 // <charconv>
 
 // constexpr from_chars_result from_chars(const char* first, const char* last,
-//                                        Integral& value, int base = 10)
+//                                        Integral& value, int32_t base = 10)
+// unit-tests/llvm_to_chars.hpp
 
 #include <charconv>
 #include <system_error>
@@ -79,7 +80,7 @@ namespace to_chars_llvm_tests {
 			test(1000000000000000000UL, "1000000000000000000");
 			test(10000000000000000000UL, "10000000000000000000");
 
-			for (int b = 2; b < 37; ++b) {
+			for (int32_t b = 2; b < 37; ++b) {
 				using xl = std::numeric_limits<v_type>;
 
 				test_value(1, b);
@@ -142,7 +143,7 @@ namespace to_chars_llvm_tests {
 			test(-100000000000000000L, "-100000000000000000");
 			test(-1000000000000000000L, "-1000000000000000000");
 
-			for (int b = 2; b < 37; ++b) {
+			for (int32_t b = 2; b < 37; ++b) {
 				using xl = std::numeric_limits<v_type>;
 
 				test_value(0, b);
@@ -153,10 +154,8 @@ namespace to_chars_llvm_tests {
 	};
 
 	TEST_CONSTEXPR_CXX23 static bool test() {
-		std::cout << "Running LLVM to_chars tests" << std::endl;
 		run<test_basics>(integrals);
 		run<test_signed>(all_signed);
-		std::cout << "LLVM to_chars tests complete" << std::endl;
 		return true;
 	}
 

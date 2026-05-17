@@ -279,8 +279,8 @@ namespace i_to_str_tests {
 		template<typename size_type_01, typename size_type_02, typename vector_type, typename output_buffer_type, typename int_type> VN_FORCE_INLINE static uint64_t impl(
 			size_type_01 test_size, size_type_02 sub_iters, const vector_type& test_data, output_buffer_type& output_buffer, int_type& current_index) {
 			uint64_t total_bytes{};
-			const auto& values = test_data.data() + current_index * test_size;
-			char* const begin  = output_buffer.data() + current_index * test_size;
+			const auto& values = test_data.data() + current_index * test_size * sub_iters;
+			char* const begin  = output_buffer.data() + current_index * test_size * sub_iters;
 			char* p			   = begin;
 			for (uint64_t y = 0; y < sub_iters; ++y) {
 				uint64_t base_index = y * test_size;
@@ -299,7 +299,7 @@ namespace i_to_str_tests {
 		template<typename int_type> static void impl(const std::vector<int_type>& test_data, const char* test_label) {
 			uint64_t vn_correct{}, vn_incorrect{};
 			uint64_t jeaiii_correct{}, jeaiii_incorrect{};
-			uint64_t fmt_format_to_correct{}, fmt_format_to_incorrect{};
+			uint64_t fmt_format_to_correct{}, fmt_format_to_incorrect{}, total_incorrect{};
 			int_type first_bad_value{};
 			bool found_bad{ false };
 			for (uint64_t x = 0; x < test_data.size(); ++x) {
@@ -320,6 +320,7 @@ namespace i_to_str_tests {
 					++vn_correct;
 				} else {
 					++vn_incorrect;
+					++total_incorrect;
 					if (!found_bad) {
 						first_bad_value = v;
 						found_bad		= true;
@@ -329,15 +330,19 @@ namespace i_to_str_tests {
 					++jeaiii_correct;
 				} else {
 					++jeaiii_incorrect;
+					++total_incorrect;
 				}
 				if (same(fmt_format_to_end, buf_fmt_format_to)) {
 					++fmt_format_to_correct;
 				} else {
 					++fmt_format_to_incorrect;
+					++total_incorrect;
 				}
 			}
-			std::cout << "[" << test_label << "] vn correct: " << vn_correct << " | incorrect: " << vn_incorrect << " | jeaiii incorrect: " << jeaiii_incorrect
-					  << " | fmt format_to incorrect: " << fmt_format_to_incorrect << std::endl;
+			if (total_incorrect > 0) {
+				std::cout << "[" << test_label << "] vn correct: " << vn_correct << " | incorrect: " << vn_incorrect << " | jeaiii incorrect: " << jeaiii_incorrect
+						  << " | fmt format_to incorrect: " << fmt_format_to_incorrect << std::endl;
+			}
 			if (vn_incorrect > 0) {
 				std::cout << "  FIRST BAD vn VALUE: " << static_cast<int64_t>(first_bad_value) << std::endl;
 			}

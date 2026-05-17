@@ -73,8 +73,8 @@ namespace str_to_i_tests {
 		template<typename size_type_01, typename size_type_02, typename vector_type, typename output_buffer_type, typename index_type> VN_FORCE_INLINE static uint64_t impl(
 			size_type_01 test_size, size_type_02 sub_iters, const vector_type& test_data, output_buffer_type& output_buffer, index_type& current_index) {
 			using out_type		  = typename output_buffer_type::value_type;
-			const auto* entries	  = test_data.data() + current_index * test_size;
-			out_type* const begin = output_buffer.data() + current_index * test_size;
+			const auto* entries	  = test_data.data() + current_index * test_size * sub_iters;
+			out_type* const begin = output_buffer.data() + current_index * test_size * sub_iters;
 			out_type* p			  = begin;
 			for (uint64_t y = 0; y < sub_iters; ++y) {
 				uint64_t base_index = y * test_size;
@@ -92,7 +92,7 @@ namespace str_to_i_tests {
 	struct verify_correctness {
 		template<typename int_type> static void impl(const std::vector<string_entry<int_type>>& test_data, const char* test_label) {
 			uint64_t vn_correct{}, vn_incorrect{};
-			uint64_t strto_correct{}, strto_incorrect{};
+			uint64_t strto_correct{}, strto_incorrect{}, total_incorrect{};
 			int_type first_bad_value{};
 			bool found_bad{ false };
 			for (uint64_t x = 0; x < test_data.size(); ++x) {
@@ -109,6 +109,7 @@ namespace str_to_i_tests {
 					++vn_correct;
 				} else {
 					++vn_incorrect;
+					++total_incorrect;
 					if (!found_bad) {
 						first_bad_value = e.expected;
 						found_bad		= true;
@@ -118,9 +119,12 @@ namespace str_to_i_tests {
 					++strto_correct;
 				} else {
 					++strto_incorrect;
+					++total_incorrect;
 				}
 			}
-			std::cout << "[" << test_label << "] vn correct: " << vn_correct << " | incorrect: " << vn_incorrect << " | strto incorrect: " << strto_incorrect << std::endl;
+			if (total_incorrect > 0) {
+				std::cout << "[" << test_label << "] vn correct: " << vn_correct << " | incorrect: " << vn_incorrect << " | strto incorrect: " << strto_incorrect << std::endl;
+			}
 			if (vn_incorrect > 0) {
 				std::cout << "  FIRST BAD vn VALUE: " << static_cast<int64_t>(first_bad_value) << std::endl;
 			}
@@ -178,7 +182,7 @@ namespace str_to_i_tests {
 	struct verify_correctness_leading_zeros {
 		template<typename int_type> static void impl(const std::vector<leading_zero_string_entry<int_type>>& test_data, const char* test_label) {
 			uint64_t vn_correct{}, vn_incorrect{};
-			uint64_t strto_correct{}, strto_incorrect{};
+			uint64_t strto_correct{}, strto_incorrect{}, total_incorrect{};
 			int_type first_bad_value{};
 			bool found_bad{ false };
 			for (const auto& e: test_data) {
@@ -194,6 +198,7 @@ namespace str_to_i_tests {
 					++vn_correct;
 				} else {
 					++vn_incorrect;
+					++total_incorrect;
 					if (!found_bad) {
 						first_bad_value = e.expected;
 						found_bad		= true;
@@ -203,9 +208,12 @@ namespace str_to_i_tests {
 					++strto_correct;
 				} else {
 					++strto_incorrect;
+					++total_incorrect;
 				}
 			}
-			std::cout << "[" << test_label << "] vn correct: " << vn_correct << " | incorrect: " << vn_incorrect << " | strto incorrect: " << strto_incorrect << std::endl;
+			if (total_incorrect > 0) {
+				std::cout << "[" << test_label << "] vn correct: " << vn_correct << " | incorrect: " << vn_incorrect << " | strto incorrect: " << strto_incorrect << std::endl;
+			}
 			if (vn_incorrect > 0) {
 				std::cout << "  FIRST BAD vn VALUE: " << static_cast<int64_t>(first_bad_value) << std::endl;
 			}

@@ -12,12 +12,7 @@
 #include "llvm_roundtrip.hpp"
 #include "llvm_integral_pass.hpp"
 
-int main(int, char**) {
-	double val{ 3.333e307 };
-	std::string string{};
-	string.resize(128);
-	vn::to_chars(string.data(), string.data() + string.size(), val);
-	std::cout << "VALUE: " << string << std::endl;
+int32_t main([[maybe_unused]] int32_t argc, [[maybe_unused]] char** argv) {
 	unit_tests::tests<vn::detail::conversion_classes::i_to_str>::impl();
 	unit_tests::tests<vn::detail::conversion_classes::str_to_i>::impl();
 	integral_pass_llvm_tests::test();

@@ -11,7 +11,8 @@
 // <charconv>
 
 // constexpr from_chars_result from_chars(const char* first, const char* last,
-//                                        Integral& value, int base = 10)
+//                                        Integral& value, int32_t base = 10)
+// unit-tests/llvm_integral_pass.hpp
 
 #include <charconv>
 #include <system_error>
@@ -100,10 +101,8 @@ namespace integral_pass_llvm_tests {
 	};
 
 	TEST_CONSTEXPR_CXX23 static bool test() {
-		std::cout << "Running LLVM Integral-Pass tests" << std::endl;
 		run<test_basics>(integrals);
 		run<test_signed>(all_signed);
-		std::cout << "LLVM Integral-Pass tests complete" << std::endl;
 		return true;
 	}
 

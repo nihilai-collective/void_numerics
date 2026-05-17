@@ -2,17 +2,18 @@
 // Copyright (c) 2026 Nihilai Collective Corp
 
 #include "i_to_str.hpp"
+#include "d_to_str.hpp"
 #include "str_to_i.hpp"
 
 #if defined(NDEBUG)
-static constexpr uint64_t total_iterations{ 20 };
-static constexpr uint64_t measured_iterations{ 5 };
+static constexpr uint64_t total_iterations{ 30 };
+static constexpr uint64_t measured_iterations{ 10 };
 #else
 static constexpr uint64_t total_iterations{ 2 };
 static constexpr uint64_t measured_iterations{ 1 };
 #endif
 
-int main() {
+int32_t main() {
 	benchmarks::tests<"int-to-str", vn::detail::conversion_classes::i_to_str, total_iterations, measured_iterations, i_to_str_tests::verify_correctness,
 		i_to_str_tests::digit_generator, benchmarks::test_holder<"std::to_chars", i_to_str_tests::conversion_benchmark<i_to_str_tests::std_op>>,
 		benchmarks::test_holder<"jeaiii::to_text", i_to_str_tests::conversion_benchmark<i_to_str_tests::jeaiii_op>>,
