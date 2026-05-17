@@ -57,7 +57,6 @@ target_compile_options(${PROJECT_NAME}
                 -march=native
                 -flto
                 -fomit-frame-pointer
-                -fno-plt
                 -fno-rtti
             >
             $<$<AND:$<CONFIG:Debug>,$<BOOL:${VN_ASAN}>>:

@@ -20,6 +20,16 @@ namespace vn {
 			}
 		}() };
 
+		template<uint_types v_type> using next_higher_int_t = decltype([]<uint_types v_type_new> {
+			if constexpr (uint8_types<v_type_new>) {
+				return uint16_t{};
+			} else if constexpr (uint16_types<v_type_new>) {
+				return uint32_t{};
+			} else if constexpr (uint32_types<v_type_new>) {
+				return uint64_t{};
+			}
+		}.template operator()<v_type>());
+
 		template<typename v_type, bool negative> static constexpr std::array<std::make_unsigned_t<v_type>, 256> gen_raw_comp_vals() {
 			constexpr auto max_value{ static_cast<std::make_unsigned_t<v_type>>(std::numeric_limits<base_t<v_type>>::max()) + comp_val_addition<negative> };
 			std::array<std::make_unsigned_t<v_type>, 256> return_values_interna{};
@@ -208,14 +218,27 @@ namespace vn {
 			VN_ALIGN(64) uint64_t shift;
 		};
 
+		template<uint8_types v_type> struct mul_shift_table<v_type> {
+			static constexpr std::array<mul_shift_entry<v_type>, 3> gen() {
+				std::array<mul_shift_entry<v_type>, 3> t{
+					mul_shift_entry<v_type>{ 205, 11 },
+					{ 164, 14 },
+					{ 142, 15 },
+				};
+				return t;
+			}
+			VN_ALIGN(64) static constexpr std::array<mul_shift_entry<v_type>, 5> table{ gen() };
+			VN_ALIGN(64) static constexpr const mul_shift_entry<v_type>* __restrict values{ table.data() };
+		};
+
 		template<uint16_types v_type> struct mul_shift_table<v_type> {
 			static constexpr std::array<mul_shift_entry<v_type>, 5> gen() {
 				std::array<mul_shift_entry<v_type>, 5> t{
-					mul_shift_entry<v_type>{ 0x999a, 0x18 },
-					{ 0x8f5d, 0x18 },
-					{ 0x8313, 0x19 },
-					{ 0xd1b8, 0x1d },
-					{ 0xf367, 0x1f },
+					mul_shift_entry<v_type>{ 52429, 19 },
+					{ 41944, 22 },
+					{ 33555, 25 },
+					{ 53688, 29 },
+					{ 62311, 31 },
 				};
 				return t;
 			}
@@ -224,20 +247,24 @@ namespace vn {
 		};
 
 		template<uint32_types v_type> struct mul_shift_table<v_type> {
-			static constexpr std::array<mul_shift_entry<v_type>, 8> gen() {
-				std::array<mul_shift_entry<v_type>, 8> t{
-					mul_shift_entry<v_type>{ 0xcccccccdU, 35 },
-					{ 0xa3d70a3eU, 38 },
-					{ 0x83126e98U, 41 },
-					{ 0xd1b71759U, 45 },
-					{ 0xa7c5ac48U, 48 },
-					{ 0x8637bd06U, 51 },
-					{ 0xd6bf94d6U, 55 },
-					{ 0xabcc7712U, 58 },
+			static constexpr std::array<mul_shift_entry<v_type>, 12> gen() {
+				std::array<mul_shift_entry<v_type>, 12> t{
+					mul_shift_entry<v_type>{ 3435973837U, 35 },
+					{ 2748779070U, 38 },
+					{ 2199023256U, 41 },
+					{ 3518437209U, 45 },
+					{ 2814749768U, 48 },
+					{ 2251799814U, 51 },
+					{ 3602879702U, 55 },
+					{ 2882303762U, 58 },
+					{ 2305843010U, 61 },
+					{ 3270547588U, 62 },
+					{ 3793277980U, 62 },
+					{ 2585324812U, 63 },
 				};
 				return t;
 			}
-			VN_ALIGN(64) static constexpr std::array<mul_shift_entry<v_type>, 8> table{ gen() };
+			VN_ALIGN(64) static constexpr std::array<mul_shift_entry<v_type>, 12> table{ gen() };
 			VN_ALIGN(64) static constexpr const mul_shift_entry<v_type>* __restrict values{ table.data() };
 		};
 
@@ -316,11 +343,6 @@ namespace vn {
 #endif
 			}
 		};
-
-		VN_ALIGN(64) static constexpr const auto* __restrict char_table_1_digit_data = int_tables<1>::values;
-		VN_ALIGN(64) static constexpr const auto* __restrict char_table_2_digit_data = int_tables<2>::values;
-		VN_ALIGN(64) static constexpr const auto* __restrict char_table_3_digit_data = int_tables<3>::values;
-		VN_ALIGN(64) static constexpr const auto* __restrict char_table_4_digit_data = int_tables<4>::values;
 
 	}
 

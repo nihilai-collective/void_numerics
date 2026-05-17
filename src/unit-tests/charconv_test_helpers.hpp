@@ -93,7 +93,7 @@ template<typename X> struct to_chars_test_base {
 		assert(r.ec == std::errc{});
 		for (auto i = r.ptr - buf; i < static_cast<decltype(i)>(sizeof(buf)); ++i)
 			assert(static_cast<uint8_t>(buf[static_cast<uint64_t>(i)]) == i + 1);
-		if (r.ptr != nullptr) {
+		if (r.ptr >= buf && r.ptr < buf + sizeof(buf)) {
 			*r.ptr = '\0';
 		}
 		{
